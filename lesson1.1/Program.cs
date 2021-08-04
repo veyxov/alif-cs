@@ -5,6 +5,6 @@ class Program {
         return Math.Sqrt(a * b);
     }
     static void Main() {
-        Console.WriteLine(geometricMean(16.8, 12.40));
+        Console.WriteLine(Math.Round(geometricMean(16.8, 12.40), 2));
     }
 }
