@@ -7,6 +7,6 @@ class Program {
         return Math.Sqrt(dx * dx + dy * dy);
     }
     static void Main() {
-        Console.WriteLine(distance(-6.20, 5.2, 2.10, 9.8));
+        Console.WriteLine(Math.Round(distance(-6.20, 5.2, 2.10, 9.8), 2));
     }
 }
