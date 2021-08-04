@@ -24,14 +24,22 @@ class Program {
         Console.Write('\n');
     }
     
-    static void reverse(int n) {
+    static void reverse1(int n) {
         // The number should by 2 digits long
         Debug.Assert(n >= 10 && n <= 99); 
         Console.WriteLine($"{n % 10}{n / 10}");
     }
+
+    // Main solution
+
+    static int reverse(int n) {
+        return ((n % 10) * 10 + n / 10);
+    }
+
     static void Main() {
-        reverse(42);
-        reverseAnyLen(56789);
+        reverse(23);
+        reverse1(41);
+        reverseAnyLen(1234);
         reverse("123456789");
     }
 }
