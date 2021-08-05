@@ -2,10 +2,6 @@
 
 class Program {
     static void findLenOfLines(double a, double b, double c) {
-        // Math.Abs(A)
-        // |+A| = +A
-        // |-A| = +A
-
         double ac = Math.Abs(a - c);
         double bc = Math.Abs(b - c);
         double sum = ac + bc;
