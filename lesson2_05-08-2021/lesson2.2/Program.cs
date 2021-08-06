@@ -12,7 +12,7 @@ class Program {
             '-' => operand1 - operand2,
             '*' => operand1 * operand2,
             '/' => operand1 / operand2,
-            _   => 0.0, // TODO: Tell the user to choose from + - * /
+            _   => throw new ArgumentException("Please choose from + - * /"),
         };
     }
     static void Main() {
