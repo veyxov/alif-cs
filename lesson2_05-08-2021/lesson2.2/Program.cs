@@ -3,8 +3,7 @@
 class Program {
     static double solve(double operand1, double operand2, char sign) {
         if (sign == '/' && operand2 == 0.0) {
-            Console.WriteLine("Cannot divide by zero");
-            throw new DivideByZeroException();
+            throw new DivideByZeroException("Cannot divide by zero");
         }
         // No need for else here
         return sign switch {
