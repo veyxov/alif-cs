@@ -2,7 +2,7 @@
 
 class Program {
     // Draw a rectangle of size n * m
-    static void rectangle(int n, int m) {
+    static void Rectangle(int n, int m) {
         for (int i = 0; i < n; ++i) {
             // Draw m lines n time
             for (int j = 0; j < m; ++j) {
@@ -24,8 +24,6 @@ class Program {
     }
     // Draw a triangle with equal sides
     static void EqualiteralTriangle(int n) {
-        // Division by 2 using bit manipulation 
-        // This is done for preformance and is equal to n / 2
         int space = n;
         int star  = 1;
         for (int i = 0; i < n; ++i) {
@@ -46,10 +44,57 @@ class Program {
             Console.Write("\n");
         }
     }
+    static void EqualiteralTriangleReverse(int n) {
+        // We subtract one from n and start with 2 spaces
+        // Because we dont need an intersection
+        // Between Upper half and lower half
+        --n;
+        int space = 2;
+        int star  = 2 * n - 1;
+        for (int i = 0; i < n; ++i) {
+            // Draw left side spaces
+            for (int j = 0; j < space; ++j)
+                Console.Write(" ");
+            // Draw stars
+            for (int j = 0; j < star; ++j)
+                Console.Write("*");
+            // Draw right side spaces
+            for (int j = 0; j < space; ++j)
+                Console.Write(" ");
+            // Space decreases by one, starts adds 2 every cicle
+            ++space;
+            star -= 2;
+            // And go to new line
+            Console.Write("\n");
+        }
+    }
     // Draw a romb of size N
-    static void romb(int n) {
+    static void Romb(int n) {
+        // For drawing a romb we only need
+        // To draw 2 Rqualiteral Triangles
+        // In mirrored (reversed) order
+        //    *
+        //   ***
+        //  *****     FIRST  HALF
+        //___________
+        //  *****     SECOND HALF
+        //   ***
+        //    *
+
+
+        EqualiteralTriangle(n);
+        EqualiteralTriangleReverse(n);
     }
     static void Main() {
-        romb(5);
+        Console.Write("Input size of the shapes: ");
+        int.TryParse(Console.ReadLine(), out int n);
+        Console.WriteLine("Rectangle:\n");
+        Rectangle(n, n * n - 2 * n);
+        Console.WriteLine("Right angled triangle:\n");
+        RightTriangle(n);
+        Console.WriteLine("Equaliteral triangle:\n");
+        EqualiteralTriangle(n);
+        Console.WriteLine("Rombus:\n");
+        Romb(n);
     }
-}
+} // Wow this code is 100 lines long :)
