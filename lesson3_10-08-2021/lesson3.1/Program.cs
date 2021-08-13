@@ -10,6 +10,6 @@ class Program {
         } else if (n > 500.0) {
             rez = (n * 3.0) / 100.0;
         }
-        Console.WriteLine($"{n + rez}");
+        Console.WriteLine($"{n - rez}");
     }
 }
