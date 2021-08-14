@@ -37,7 +37,7 @@ class Program {
         c = int.Parse(Console.ReadLine());
         d = int.Parse(Console.ReadLine());
         if (a == b && b == c && c == d) {
-            int mul = 4 * a; // All of them are equal: a * a * a ... n = n * a
+            int mul = a * b * c * d; // All of them are equal: a * a * a ... n = n * a
             Console.WriteLine(mul);
         }
         else if (!(a < b && b < c && c < d)) {
