@@ -1,38 +1,28 @@
 ﻿using System;
 
 class Title {
-    private string title;
+    public string TheTitle { get; set; }
     public void Show() {
         Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine($"Title: {title}");
-        Console.ResetColor();
-    }
-    public void Set(string title) {
-        this.title = title;
+        Console.WriteLine($"Title: {TheTitle}"); Console.ResetColor();
     }
 }
 
 class Author {
-    private string author;
+    public string TheAuthor { get; set; }
     public void Show() {
         Console.ForegroundColor = ConsoleColor.Yellow;
-        Console.WriteLine($"Author: {author}");
+        Console.WriteLine($"Author: {TheAuthor}");
         Console.ResetColor();
-    }
-    public void Set(string author) {
-        this.author = author;
     }
 }
 
 class Content {
-    private string content;
+    public string TheContent { get; set; }
     public void Show() {
         Console.ForegroundColor = ConsoleColor.Green;
-        Console.WriteLine($"Content: {content}");
+        Console.WriteLine($"Content: {TheContent}");
         Console.ResetColor();
-    }
-    public void Set(string content) {
-        this.content = content;
     }
 }
 
@@ -62,9 +52,9 @@ class Program {
         string content = Console.ReadLine();
 
         Book book = new Book();
-        book.title.Set(title);
-        book.author.Set(author);
-        book.content.Set(content);
+        book.title.TheTitle = title;
+        book.author.TheAuthor = author;
+        book.content.TheContent = content;
 
         book.title.Show();
         book.author.Show();
