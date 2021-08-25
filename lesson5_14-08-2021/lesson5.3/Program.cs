@@ -6,7 +6,7 @@ class Program {
         // Create array
         int[] rez = new int[count];
         int sz = 0; // This is current position to be filled
-        for (int i = index; i < arr.Length; ++i)
+        for (int i = index; i <= Math.Min(arr.Length - 1, count); ++i)
             rez[sz++] = arr[i];
 
         while (sz < count) // If there is empty space fill it with 1
