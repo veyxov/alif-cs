@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 
 class Transport {
     public double Speed     { get; set; }
@@ -11,12 +12,12 @@ class Transport {
 
     public void StartEngine() {
         Console.WriteLine("Starting engine ...");
-        isTurnedOn = true;
+        IsTurnedOn = true;
     }
 
     public void StopEngine() {
         Console.WriteLine("Turning the engine off ...");
-        isTurnedOn = false;
+        IsTurnedOn = false;
     }
 
     // Run for given kilometrs
@@ -30,6 +31,9 @@ class Transport {
             Console.WriteLine($"Not enought fuel to go {kms} kilometrs");
             return;
         }
+        Console.WriteLine($"Going {kms} killometers..");
+        Thread.Sleep(1000 + kms);
+        Console.WriteLine("Done.");
         FuelLevel -= kms;
     }
 
@@ -38,16 +42,17 @@ class Transport {
         Console.WriteLine($"Speed: {Speed}");
         Console.WriteLine($"Fuel Type: {FuelType}");
         Console.WriteLine($"Speed: {Speed}");
-        Console.WriteLine($"Speed: {Speed}");
-        Console.WriteLine($"Speed: {Speed}");
     }
 
     // The first rule ! :)
     public Transport() {  }
 
-    public Transport(string name, double speed) {
+    public Transport(string name, double speed, string fuelType, int seats, int fuelLevel) {
         Name  = name;
         Speed = speed;
+        FuelType = fuelType;
+        Seats = seats;
+        FuelLevel = fuelLevel;
     }
 }
 
@@ -57,10 +62,16 @@ class Auto : Transport {
     // Who tints cargo car's windows ?
     public bool HasWindowTinting { get; set; }
 
+    public void GetAutoInfo() {
+        Console.WriteLine("Auto info");
+        Console.WriteLine($"Doors: {DoorsCount}\nDoes have tinting: {HasWindowTinting}");
+    }
+
     // Default constructor
     public Auto() {  }
 
-    public Auto(int doorsCout, bool hastinting) {
+                                                                                                                     // Inheriting constructro for Transport
+    public Auto(int doorsCout, bool hastinting, string name, double speed, string fuelT, int seats, int fuelLevel) : base(name, speed, fuelT, seats, fuelLevel) {
         DoorsCount = doorsCout;
         HasWindowTinting = hastinting;
     }
@@ -86,7 +97,9 @@ class Plane : Transport {
     public int MaxAltitude { get; set; } // How much this plane can go high
     public string engineType;
     public string EingineType {
-        get;
+        get {
+            return engineType;
+        }
         set {
             if (value != "jet" && value != "propeller" && value != "rocket") {
                 Console.WriteLine("Plane engine types : {jet propeller rocket}");
@@ -127,6 +140,20 @@ class Train : Transport {
 
 class Program {
     static void Main() {
+        Console.WriteLine("Transport: ");
+        Transport transport = new Transport("Generic transport", 50, "Gas", 5, 100);
+        transport.GetTransportInfo();
+        transport.Go(50);
+        transport.StartEngine();
+        transport.Go(30);
+        transport.Go(100);
+        transport.StopEngine();
+        Console.WriteLine("-----------------------------");
 
+        Console.WriteLine("Auto: ");
+        Auto auto = new Auto(4, true, "BMW", 120, "Diesel", 6, 150);
+        auto.GetTransportInfo();
+        auto.GetAutoInfo();
+        Console.WriteLine("-----------------------------");
     }
 }
