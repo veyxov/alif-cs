@@ -33,6 +33,15 @@ class Transport {
         FuelLevel -= kms;
     }
 
+    public void GetTransportInfo() {
+        Console.WriteLine("Transport info: ");
+        Console.WriteLine($"Speed: {Speed}");
+        Console.WriteLine($"Fuel Type: {FuelType}");
+        Console.WriteLine($"Speed: {Speed}");
+        Console.WriteLine($"Speed: {Speed}");
+        Console.WriteLine($"Speed: {Speed}");
+    }
+
     // The first rule ! :)
     public Transport() {  }
 
@@ -43,16 +52,30 @@ class Transport {
 }
 
 class Auto : Transport {
+    // How many doors this car has ?
+    public int DoorsCount { get; set; }
+    // Who tints cargo car's windows ?
+    public bool HasWindowTinting { get; set; }
+
     // Default constructor
     public Auto() {  }
 
-    // How many doors this car has ?
-    public int DoorsCount { get; set; }
+    public Auto(int doorsCout, bool hastinting) {
+        DoorsCount = doorsCout;
+        HasWindowTinting = hastinting;
+    }
 }
 
 class PassengerAuto : Auto {
     public int passengerCapacity;
-    public bool HasConditioner = true;
+    public bool hasConditioner = true;
+
+    public PassengerAuto() {  }
+
+    public PassengerAuto(int passCount, bool hasCond) {
+        passengerCapacity = passCount;
+        hasConditioner = hasCond;
+    }
 }
 
 class CargoAuto : Auto {
