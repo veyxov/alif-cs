@@ -29,16 +29,11 @@ class ExpertDowWorker : ProDocWorker {
         Console.WriteLine("Document saved in new format !"); }
 }
 class Program {
-    // Don't pay attention at this.
     public static bool IsValidEmail(string email) {
         if (!MailAddress.TryCreate(email, out var mailAddress))
             return false;
         return true;
     }
-
-    // Don't pay attention at this.
-    // This is copy-pasted from:
-    // https://stackoverflow.com/questions/3404421/password-masking-console-application
     public static SecureString GetPassword() {
         var pwd = new SecureString();
         while (true) {
@@ -76,19 +71,10 @@ class Program {
         return true;
     }
     static void Main(string[] args) {
-        // This is an example of propretary(BAD) software :(
-        //
-        // Software should be FREE and LIBRE !
-        // Not FREE as in free beer, FREE as in freedom !!!
-        //
-        // FOSS (Free and Open Source Software) is the future !
-        //
-
         Console.WriteLine("PRO 99$ or EXPERT 199$ or BASIC *free");
         Console.WriteLine("*Comes with some limitations");
         Console.Write("Choose your plan: ");
 
-        // We will decide later which plan it is.
         DocWorker prog = null;
 
         string plan = Console.ReadLine();
