@@ -4,10 +4,11 @@ using System.Data.SqlClient;
 
 /* Input output helper */
 static class IO {
-    static private bool DEBUG = true;
+    static private bool DEBUG    = true;
+    static private bool COLORFUL = true;
 
-    static public void Print(string what, ConsoleColor color = ConsoleColor.Black, bool newLine = true) {
-        Console.ForegroundColor = color;
+    static public void Print(string what, ConsoleColor color = ConsoleColor.White, bool newLine = true) {
+        Console.ForegroundColor = COLORFUL ? color : ConsoleColor.White;
         Console.Write(what);
 
         if (newLine) Console.Write("\n");
@@ -16,7 +17,7 @@ static class IO {
     }
 
     /* This function will not output to the terminal if DEBUG is not set */
-    static public void Debug(string what, ConsoleColor color = ConsoleColor.DarkCyan, bool newLine = true) {
+    static public void Debug(string what, ConsoleColor color = ConsoleColor.DarkGray, bool newLine = true) {
         if (!DEBUG) return;
 
         Print(what, color, newLine);
@@ -57,6 +58,21 @@ class Account {
     }
 
     class Program {
+        static decimal GetAccountBalance(string account, SqlConnection cnn) {
+            decimal balance = 0;
+
+            cnn.Open(); IO.Debug("Connection opened !");
+            var command = cnn.CreateCommand();
+
+            // I think parameters are owerhead in this situation (only 1 parameter)
+            command.CommandText = $"select sum([Amount]) from [dbo].[Transactions] LEFT JOIN [dbo].[Account] ON [Account].[Id] = [Transactions].[Account_Id] WHERE '{account}'";
+
+            var data = command.ExecuteReader();
+
+            while (data.Read()) balance = !string.IsNullOrEmpty(data.GetValue(0)?.ToString()) ? data.GetDecimal(0) : 0;
+
+            return balance;
+        }
         /* NOTE: Why ref ? */
         static void CreateAccount(ref SqlConnection cnn) {
             var curAcc = new Account(IO.GetString("Input Account number in xxxxx format: "), 1, DateTime.Now);
@@ -64,8 +80,7 @@ class Account {
             try {
                 if (String.IsNullOrEmpty(curAcc.Acc)) throw new Exception("Account can not be empty !");
                 /* If OK then, open the connection */
-                cnn.Open();
-                IO.Debug("Connection opened !");
+                cnn.Open(); IO.Debug("Connection opened !");
                 try {
                     var command = cnn.CreateCommand();
                     /* The command to execute */
@@ -77,13 +92,13 @@ class Account {
                     if (res <= 0) throw new Exception("The account was not created !");
                     /* If OK print this ...*/
                     IO.Print($"Account {curAcc.Acc} created successfully !", ConsoleColor.Green);
+
+                    command.Parameters.Clear(); IO.Debug("Parameters cleared !");
                 } catch (Exception ex) {
-                    IO.Print(ex.Message);
-                    IO.Print("Account was not created !", ConsoleColor.Red);
+                    IO.Print(ex.Message); IO.Print("Account was not created !", ConsoleColor.Red);
                 } finally {
                     /* Close the connection in every case */
-                    IO.Debug("Connection closed !");
-                    cnn.Close();
+                    IO.Debug("Connection closed !"); cnn.Close();
                 }
             } catch (Exception ex) {
                 IO.Print(ex.Message, ConsoleColor.Red);
@@ -91,8 +106,7 @@ class Account {
         }
         static void ShowAccounts(ref SqlConnection cnn) {
             try {
-                cnn.Open();
-                IO.Debug("Connection opened !");
+                cnn.Open(); IO.Debug("Connection opened !");
 
                 var command = cnn.CreateCommand();
 
@@ -115,17 +129,31 @@ class Account {
                     /* Print to console (terminal)*/
                     tempAcc.GetInfo();
                 }
+                data.Close(); IO.Debug("Reader closed !");
             } catch (Exception ex) {
                 // TODO: Complete this block
-                IO.Print(ex.Message);
-                IO.Print("An error occured !", ConsoleColor.Red);
+                IO.Print(ex.Message); IO.Print("An error occured !", ConsoleColor.Red);
             } finally {
                 cnn.Close();
                 IO.Debug("Connection closed !");
             }
         }
-        static void Transfer(string from, string to, decimal amount) {
+        static void Transfer(string from, string to, decimal amount, ref SqlConnection cnn) {
+            try {
+                cnn.Open(); IO.Debug("Connection opened !");
 
+                if (String.IsNullOrEmpty(from) || String.IsNullOrEmpty(to)) {
+                    IO.Print("Invalid accounts !", ConsoleColor.Red);
+                }
+
+                IO.Debug("Transfer ended.");
+            } catch (Exception ex) {
+                // TODO: Complete this block
+                IO.Print(ex.Message);
+                IO.Print("An error occured !", ConsoleColor.Red);
+            } finally {
+                cnn.Close(); IO.Debug("Connection closed !");
+            }
         }
 
         static void Main() {
