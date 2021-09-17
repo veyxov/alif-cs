@@ -37,6 +37,8 @@ class Account {
     public DateTime  Created_At  { get; set; }
     public DateTime? Updated_At  { get; set; } // This can be null
 
+    public void GetInfo() { IO.Print($"{Id}\t{Acc}\t{Is_Active}\t{Created_At}\t{Updated_At}", ConsoleColor.Blue); }
+
     // Default constructor
     public Account() { }
 
@@ -87,8 +89,40 @@ class Account {
                 IO.Print(ex.Message, ConsoleColor.Red);
             }
         }
-        static void ShowAccounts() {
+        static void ShowAccounts(ref SqlConnection cnn) {
+            try {
+                cnn.Open();
+                IO.Debug("Connection opened !");
 
+                var command = cnn.CreateCommand();
+
+                command.CommandText = "SELECT * FROM Account";
+                var data = command.ExecuteReader();
+
+                /* Output the data */
+                IO.Print("Id\tAccount\tActive\tCreation Date\t\tUpdate Date");
+                while (data.Read()) {
+                    var tempAcc        = new Account();
+                    tempAcc.Id         = int.Parse(data["Id"].ToString());
+                    tempAcc.Acc        = data["Account"].ToString();
+                    tempAcc.Is_Active  = int.Parse(data["Is_Active"].ToString());
+                    tempAcc.Created_At = DateTime.Parse(data["Created_At"].ToString());
+
+                    // Temporary store UpdatedAt
+                    var tUpdatedAt = data["Updated_At"].ToString();
+                    tempAcc.Updated_At = !String.IsNullOrEmpty(tUpdatedAt) ? DateTime.Parse(tUpdatedAt) : null;
+
+                    /* Print to console (terminal)*/
+                    tempAcc.GetInfo();
+                }
+            } catch (Exception ex) {
+                // TODO: Complete this block
+                IO.Print(ex.Message);
+                IO.Print("An error occured !", ConsoleColor.Red);
+            } finally {
+                cnn.Close();
+                IO.Debug("Connection closed !");
+            }
         }
         static void Transfer(string from, string to, decimal amount) {
 
@@ -123,6 +157,7 @@ class Account {
                         CreateAccount(ref cnn);
                         break;
                     case "2":
+                        ShowAccounts(ref cnn);
                         break;
                     case "3":
                         break;
