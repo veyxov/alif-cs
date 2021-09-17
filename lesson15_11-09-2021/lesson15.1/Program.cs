@@ -153,7 +153,8 @@ class Program {
         SQL.StartConnection();
 
         // Interactive testing system
-        while (true) {
+        bool running = true;
+        while (running) {
             Console.WriteLine("Choose 1-insert 2-delete 3-update 4-selectID 5-selectALL");
             var cmd = Console.ReadLine();
 
@@ -175,8 +176,8 @@ class Program {
                     SQL.SelectAll();
                     break;
                 default:
-                    goto END; // I know that using goto statment is not recommended
-                              // But I could not find another solution :(
+                    running = false;
+                    break;
             }
         }
 END:
