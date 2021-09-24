@@ -1,7 +1,7 @@
 using System;
 /* Input output helper */
 static class IO {
-    static private bool DEBUG    = false;
+    static private bool DEBUG    = true;
     static private bool COLORFUL = true;
 
     static public void Print<T>(T what, ConsoleColor color = ConsoleColor.White, bool newLine = true) {
