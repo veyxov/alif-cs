@@ -54,6 +54,43 @@ static class SQL
         var phoneNumber = IO.Get<string>("Input your number: ");
     }
 
+    static public bool Auth(string login, string pass) {
+        string authQuery = "select [Password] from [Accounts] WHERE [Login] = @login";
+
+        using (var cnn = new SqlConnection(cnnStr)) {
+            using (var cmd = cnn.CreateCommand()) {
+                /* Open the connection */
+                try {
+                    cnn.Open();
+                } catch (Exception ex) {
+                    IO.Print(ex.Message, ConsoleColor.Red);
+                    IO.Print("Cannot open connection !", ConsoleColor.Red);
+                }
+                IO.Debug("Connection opened !");
+
+                /* Create the command */
+                cmd.CommandText = authQuery;
+                /* Add parameters */
+                cmd.Parameters.AddWithValue("@login", login);
+
+                /* Try to run the command */
+                SqlDataReader result = null;
+                try {
+                    result = cmd.ExecuteReader();
+                } catch (Exception ex) {
+                    IO.Print(ex.Message, ConsoleColor.Red);
+                    IO.Print("Cannot execute query !", ConsoleColor.Red);
+                }
+                string originalPassword = null;
+                while (result.Read()) originalPassword = result.GetString(0);
+                if (originalPassword == pass) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        }
+    }
     static public bool ExistAccount(string login) {
         string checkQuery = 
             "SELECT Login FROM [Accounts] WHERE [Login] = @login";

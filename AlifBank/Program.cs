@@ -36,8 +36,15 @@ namespace AlifBank
                   Y = Pos.Bottom(passText)
             };
             doneButton.Clicked += () => {
-                if (!SQL.ExistAccount(loginText.Text.ToString())) {
-                    MessageBox.Query("Error!", loginText.Text.ToString(), "Ok");
+                string loginRez = loginText.Text.ToString();
+                string passRez = passText.Text.ToString();
+                if (!SQL.ExistAccount(loginRez)) {
+                    MessageBox.Query("Error!", $"Account {loginText.Text.ToString()} not found.", "Ok");
+                } else if (!SQL.Auth(loginRez, passRez)) {
+                    MessageBox.Query("Error!", $"Wrong password for {loginText.Text.ToString()}.", "Ok");
+                } else {
+                    /* Everything is ok ! */
+                    // TODO: Go to home screen
                 }
             };
             top.Add(login, password, loginText, passText, doneButton);
