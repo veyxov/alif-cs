@@ -36,7 +36,9 @@ namespace AlifBank
                   Y = Pos.Bottom(passText)
             };
             doneButton.Clicked += () => {
-                MessageBox.Query("Result", passText.Text);
+                if (!SQL.ExistAccount(loginText.Text.ToString())) {
+                    MessageBox.Query("Error!", loginText.Text.ToString(), "Ok");
+                }
             };
             top.Add(login, password, loginText, passText, doneButton);
 

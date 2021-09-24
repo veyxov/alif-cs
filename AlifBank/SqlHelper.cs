@@ -53,6 +53,45 @@ static class SQL
     static public void Register() {
         var phoneNumber = IO.Get<string>("Input your number: ");
     }
+
+    static public bool ExistAccount(string login) {
+        string checkQuery = 
+            "SELECT Login FROM [Accounts] WHERE [Login] = @login";
+        using (var cnn = new SqlConnection(cnnStr)) {
+            using (var cmd = cnn.CreateCommand()) {
+                /* Open the connection */
+                try {
+                    cnn.Open();
+                } catch (Exception ex) {
+                    IO.Print(ex.Message, ConsoleColor.Red);
+                    IO.Print("Cannot open connection !", ConsoleColor.Red);
+                }
+                IO.Debug("Connection opened !");
+
+                /* Create the command */
+                cmd.CommandText = checkQuery;
+                /* Add parameters */
+                cmd.Parameters.AddWithValue("@login", login);
+
+                /* Try to run the command */
+                SqlDataReader result = null;
+                try {
+                    result = cmd.ExecuteReader();
+                } catch (Exception ex) {
+                    IO.Print(ex.Message, ConsoleColor.Red);
+                    IO.Print("Cannot execute query !", ConsoleColor.Red);
+                }
+
+                if (result.HasRows) {
+                    IO.Print($"Account {login} found successfully !", ConsoleColor.Green);
+                    return true;
+                } else {
+                    IO.Print($"Account not found!", ConsoleColor.Red);
+                }
+            }
+        }
+        return false;
+    }
 }
 
 public class Account {
