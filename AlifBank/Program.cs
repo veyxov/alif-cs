@@ -1,12 +1,10 @@
-﻿using System;
-
-namespace AlifBank
+﻿namespace AlifBank
 {
     class Program
     {
         static void Main()
         {
 
-        }
+        } 
     }
 }
