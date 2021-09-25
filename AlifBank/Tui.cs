@@ -1,10 +1,32 @@
 /* This file holds the UI part of the project */
 using System;
 using Terminal.Gui;
+using NStack;
 namespace AlifBank
 {
     class tui
     {
+        static void RegisterAdditionalScreen()
+        {
+            /*var marStatusLabel = new Label("Maritial status")
+            {
+                X = Pos.Center(),
+                Y = Pos.Bottom(genderRadio)
+            };
+
+            var marStatusRadio = new RadioGroup(new ustring[]
+                    {
+                        "Single",
+                        "Married",
+                        "Divorced",
+                        "Widow(er)"
+                    })
+            {
+                X = Pos.Center(),
+                Y = Pos.Bottom(marStatusLabel)
+            };
+            */
+        }
         static void RegisterScreen()
         {
             Application.Init();
@@ -17,25 +39,98 @@ namespace AlifBank
                 Y = 1
             };
 
-            var loginLab = new Label("Login")
+            var fnameLabel = new Label("First name: ")
             {
-                X = Pos.Center(),
+                X = Pos.Center() - 20,
+                Y = Pos.Bottom(regLabel)
+            };
+
+            var fnameText = new TextField()
+            {
+                X = Pos.Right(fnameLabel),
+                Y = Pos.Bottom(regLabel),
+                Width = 15
+            };
+
+            var lnameLabel = new Label("Last name: ")
+            {
+                X = Pos.Left(fnameLabel),
+                Y = Pos.Bottom(fnameText)
+            };
+
+            var lnameText = new TextField()
+            {
+                X = Pos.Right(lnameLabel) + 1,
+                Y = Pos.Bottom(fnameText),
+                Width = 15
+            };
+
+            var ageLabel = new Label("Age: ")
+            {
+                X = Pos.Left(fnameLabel),
+                Y = Pos.Bottom(lnameText)
+            };
+
+            var ageText = new TextField()
+            {
+                X = Pos.Left(lnameText),
+                Y = Pos.Bottom(lnameText),
+                Width = 3
+            };
+
+            var loginLab = new Label("Login:")
+            {
+                X = Pos.Left(ageLabel),
                 Y = Pos.Bottom(regLabel) + 3
             };
 
             var loginText = new TextField("+992")
             {
-                X = Pos.Center(),
-                Y = Pos.Bottom(loginLab),
+                X = Pos.Left(ageText),
+                Y = Pos.Bottom(ageText),
                 /* Phone len in TJ is 9 and +992 prefix and margin */
                 Width = 9 + 4 + 1
             };
 
-            var nameLab = new Label("Name") {
-
+            var passLab = new Label("Password:")
+            {
+                X = Pos.Left(loginLab),
+                Y = Pos.Bottom(loginLab)
             };
 
-            top.Add(regLabel, loginLab, loginText);
+            var passText = new TextField() 
+            {
+                X = Pos.Left(loginText),
+                Y = Pos.Bottom(loginText),
+                Width = 12
+            };
+
+            var genderLable = new Label("Gender")
+            {
+                X = Pos.Center(),
+                Y = Pos.Bottom(loginText) + 1
+            };
+
+            var genderRadio = new RadioGroup(new ustring[] { "Male", "Female" })
+            {
+                X = Pos.Center(),
+                Y = Pos.Bottom(genderLable)
+            };
+
+            var submitButton = new Button("Submit")
+            {
+                X = Pos.Center(),
+                Y = Pos.AnchorEnd(1)
+            };
+
+            top.Add(regLabel);
+            top.Add(fnameLabel, fnameText);
+            top.Add(lnameLabel, lnameText);
+            top.Add(ageLabel, ageText);
+            top.Add(loginLab, loginText);
+            top.Add(passLab, passText);
+            top.Add(genderLable, genderRadio);
+            top.Add(submitButton);
             Application.Run();
         }
         static void LoginScreen()
