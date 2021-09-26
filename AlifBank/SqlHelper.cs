@@ -4,6 +4,54 @@ static class SQL
 {
     static private string cnnStr = "Data Source=localhost;Initial Catalog=AlifBank;User ID=sa;Password=qwerty112!";
 
+    static public Account GetAccountData(string login)
+    {
+        var getDataQuery =
+            "select * from [dbo].[Accounts] WHERE Login = @login";
+
+        try {
+            using (var cnn = new SqlConnection(cnnStr)) {
+                using (var cmd = cnn.CreateCommand()) {
+                    /* Open the connection */
+                    try {
+                        cnn.Open();
+                    } catch (Exception ex) {
+                        IO.Print(ex.Message, ConsoleColor.Red);
+                        IO.Print("Cannot open connection !", ConsoleColor.Red);
+                    }
+                    IO.Debug("Connection opened !");
+
+                    /* Create the command */
+                    cmd.CommandText = getDataQuery;
+
+                    cmd.Parameters.AddWithValue("@login", login);
+
+                    /* Try to run the command */
+                    SqlDataReader result = null;
+                    try {
+                        result = cmd.ExecuteReader();
+                        if (!result.HasRows) throw new Exception("No data !");
+                        result.Read();
+                    } catch {
+
+                    }
+                    // Create new Account instance using the data
+                    return new Account() {
+                            Id       = result.GetInt32(0),
+                            Login    = result.GetString(1),
+                            Password = result.GetString(2),
+                            FistName = result.GetString(3),
+                            LastName = result.GetString(4),
+                            Age      = result.GetInt32(5),
+                            Gender   = result.GetInt32(6)
+                    };
+                }
+            }
+        } catch (Exception ex) {
+            throw new Exception(ex.Message);
+        }
+    }
+
     static public bool CreateAccount(Account acc)
     {
         if (ExistAccount(acc.Login)) {

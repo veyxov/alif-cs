@@ -2,10 +2,12 @@
 using System;
 using Terminal.Gui;
 using NStack;
+using MainApp;
 namespace AlifBank
 {
     class tui
     {
+        public static string currentLogin = null;
         static void CreateCreditScreen()
         {
             Application.Init();
@@ -122,6 +124,20 @@ namespace AlifBank
                 Y = Pos.Bottom(limitLabel)
             };
 
+            var submitButton = new Button("Submit")
+            {
+                X = Pos.Center(),
+                Y = Pos.Bottom(limitRadio),
+            };
+
+            submitButton.Clicked += () => {
+                var points = Program.CalculatePoints(currentLogin);
+
+                var sLimit   = limitRadio.SelectedItem;
+                var sPurPose = purposeRadio.SelectedItem;
+                var sDelay   = delayRadio.SelectedItem;
+            };
+
             top.Add(marStatusLabel, marStatusRadio);
             top.Add(isFromTJ);
             top.Add(loanFromTotalLable, loanFromTotalRadio);
@@ -129,6 +145,7 @@ namespace AlifBank
             top.Add(delayLable, delayRadio);
             top.Add(purposeLabel, purposeRadio);
             top.Add(limitLabel, limitRadio);
+            top.Add(submitButton);
             Application.Run();
         }
         static void AdminScreen()
@@ -339,6 +356,7 @@ namespace AlifBank
 
                 else
                 {
+                    currentLogin = loginRez;
                     running = AdminScreen;
                     Application.RequestStop();
                 }

@@ -5,8 +5,7 @@ static class IO {
     static private bool COLORFUL = true;
 
     static public void Print<T>(T what, ConsoleColor color = ConsoleColor.White, bool newLine = true) {
-        Console.ForegroundColor = COLORFUL ? color : ConsoleColor.White;
-        //Console.Write(what);
+        Console.ForegroundColor = COLORFUL ? color : ConsoleColor.White; //Console.Write(what);
 
         //if (newLine) Console.Write("\n");
 
