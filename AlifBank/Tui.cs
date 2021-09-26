@@ -11,8 +11,124 @@ namespace AlifBank
             Application.Init();
             var top = Application.Top;
 
-            top.Add(new Label(10, 10, "Whats up"));
+            var marStatusLabel = new Label("Maritial status")
+            {
+                X = Pos.Center(),
+                Y = 1
+            };
 
+            var marStatusRadio = new RadioGroup(new ustring[]
+            {
+              "Single",
+              "Married",
+              "Divorced",
+              "Widow(er)"
+            })
+            {
+                X = Pos.Center(),
+                Y = Pos.Bottom(marStatusLabel)
+            };
+
+            var isFromTJ = new CheckBox("I am Tajikistan citizen. (checkbox)")
+            {
+                X = Pos.Center(),
+                Y = Pos.Bottom(marStatusRadio)
+            };
+
+            var loanFromTotalLable = new Label("Loan amount from total income: ")
+            {
+                X = Pos.Center(),
+                Y = Pos.Bottom(isFromTJ)
+            };
+
+            var loanFromTotalRadio = new RadioGroup(new ustring[]
+            {
+              "less than 80%",
+              "80%  - 150%",
+              "150% - 250%",
+              "more than 250%"
+            })
+            {
+                X = Pos.Center(),
+                Y = Pos.Bottom(loanFromTotalLable)
+            };
+
+            var creditHistoryLabel = new Label("Credit history: ")
+            {
+                X = Pos.Center(),
+                Y = Pos.Bottom(loanFromTotalRadio)
+            };
+
+            var creditHistoryRadio = new RadioGroup(new ustring[]
+            {
+              "More than 3 closed credits",
+              "1 - 2 closed credits",
+              "No credit history",
+            })
+            {
+                X = Pos.Center(),
+                Y = Pos.Bottom(creditHistoryLabel)
+            };
+
+            var delayLable = new Label("Delay history: ")
+            {
+                X = Pos.Center(),
+                Y = Pos.Bottom(creditHistoryRadio)
+            };
+
+            var delayRadio = new RadioGroup(new ustring[]
+            {
+              "less than 3",
+              "4",
+              "5 - 7",
+              "more than 7",
+            })
+            {
+                X = Pos.Center(),
+                Y = Pos.Bottom(delayLable)
+            };
+
+            var purposeLabel = new Label("Delay history: ")
+            {
+                X = Pos.Center(),
+                Y = Pos.Bottom(creditHistoryRadio)
+            };
+
+            var purposeRadio = new RadioGroup(new ustring[]
+            {
+              "Appliances",
+              "Repair",
+              "Phone",
+              "Other",
+            })
+            {
+                X = Pos.Center(),
+                Y = Pos.Bottom(purposeLabel)
+            };
+
+            var limitLabel = new Label("Delay history: ")
+            {
+                X = Pos.Center(),
+                Y = Pos.Bottom(creditHistoryRadio)
+            };
+
+            var limitRadio = new RadioGroup(new ustring[]
+            {
+              "less than 12 months",
+              "more than 12 months",
+            })
+            {
+                X = Pos.Center(),
+                Y = Pos.Bottom(purposeLabel)
+            };
+
+            top.Add(marStatusLabel, marStatusRadio);
+            top.Add(isFromTJ);
+            top.Add(loanFromTotalLable, loanFromTotalRadio);
+            top.Add(creditHistoryLabel, creditHistoryRadio);
+            top.Add(delayLable, delayRadio);
+            top.Add(purposeLabel, purposeRadio);
+            top.Add(limitLabel, limitRadio);
             Application.Run();
         }
         static void AdminScreen()
@@ -40,27 +156,6 @@ namespace AlifBank
 
             top.Add(welcomeLabel, newCreditButton);
             Application.Run();
-        }
-        static void RegisterAdditionalScreen()
-        {
-            /*var marStatusLabel = new Label("Maritial status")
-              {
-              X = Pos.Center(),
-              Y = Pos.Bottom(genderRadio)
-              };
-
-              var marStatusRadio = new RadioGroup(new ustring[]
-              {
-              "Single",
-              "Married",
-              "Divorced",
-              "Widow(er)"
-              })
-              {
-              X = Pos.Center(),
-              Y = Pos.Bottom(marStatusLabel)
-              };
-              */
         }
         static void RegisterScreen()
         {
@@ -231,8 +326,16 @@ namespace AlifBank
             {
                 string loginRez = loginText.Text.ToString();
                 string passRez = passText.Text.ToString();
-                if (!SQL.ExistAccount(loginRez)) MessageBox.ErrorQuery("Error!", $"Account {loginRez} not found.", "Ok");
-                else if (!SQL.Auth(loginRez, passRez)) MessageBox.ErrorQuery("Error!", $"Wrong password for {loginRez}.", "Ok");
+                if (!SQL.ExistAccount(loginRez))
+                {
+                    MessageBox.ErrorQuery("Error!", $"Account {loginRez} not found.", "Ok");
+                    loginText.SetFocus();
+                }
+                else if (!SQL.Auth(loginRez, passRez))
+                {
+                    MessageBox.ErrorQuery("Error!", $"Wrong password for {loginRez}.", "Ok");
+                    passText.SetFocus();
+                }
 
                 else
                 {
