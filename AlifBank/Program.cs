@@ -1,0 +1,7 @@
+﻿namespace AlifBank
+{
+    class Program
+    {
+
+    }
+}

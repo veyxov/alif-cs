@@ -6,26 +6,61 @@ namespace AlifBank
 {
     class tui
     {
+        static void CreateCreditScreen()
+        {
+            Application.Init();
+            var top = Application.Top;
+
+            top.Add(new Label(10, 10, "Whats up"));
+
+            Application.Run();
+        }
+        static void AdminScreen()
+        {
+            Application.Init();
+            var top = Application.Top;
+
+            var welcomeLabel = new Label("Welcome to the admin screen !")
+            {
+                X = Pos.Center(),
+                Y = 1
+            };
+
+            var newCreditButton = new Button("Create new credit for user")
+            {
+                X = Pos.Center(),
+                Y = Pos.Bottom(welcomeLabel) + 3
+            };
+
+            newCreditButton.Clicked += () =>
+            {
+                running = CreateCreditScreen;
+                Application.RequestStop();
+            };
+
+            top.Add(welcomeLabel, newCreditButton);
+            Application.Run();
+        }
         static void RegisterAdditionalScreen()
         {
             /*var marStatusLabel = new Label("Maritial status")
-            {
-                X = Pos.Center(),
-                Y = Pos.Bottom(genderRadio)
-            };
+              {
+              X = Pos.Center(),
+              Y = Pos.Bottom(genderRadio)
+              };
 
-            var marStatusRadio = new RadioGroup(new ustring[]
-                    {
-                        "Single",
-                        "Married",
-                        "Divorced",
-                        "Widow(er)"
-                    })
-            {
-                X = Pos.Center(),
-                Y = Pos.Bottom(marStatusLabel)
-            };
-            */
+              var marStatusRadio = new RadioGroup(new ustring[]
+              {
+              "Single",
+              "Married",
+              "Divorced",
+              "Widow(er)"
+              })
+              {
+              X = Pos.Center(),
+              Y = Pos.Bottom(marStatusLabel)
+              };
+              */
         }
         static void RegisterScreen()
         {
@@ -98,7 +133,7 @@ namespace AlifBank
                 Y = Pos.Bottom(loginLab)
             };
 
-            var passText = new TextField() 
+            var passText = new TextField()
             {
                 X = Pos.Left(loginText),
                 Y = Pos.Bottom(loginText),
@@ -121,6 +156,31 @@ namespace AlifBank
             {
                 X = Pos.Center(),
                 Y = Pos.AnchorEnd(1)
+            };
+
+            submitButton.Clicked += () =>
+            {
+                var newAccount = new Account()
+                {
+                    FistName = fnameText.Text.ToString(),
+                    LastName = lnameText.Text.ToString(),
+                    Age = int.Parse(ageText.Text.ToString()),
+                    Login = loginText.Text.ToString(),
+                    Password = passText.Text.ToString(),
+                    Gender = genderRadio.SelectedItem,
+
+                };
+                bool result = false;
+                try
+                {
+                    SQL.CreateAccount(newAccount);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.ErrorQuery("Error !", ex.Message, "Ok");
+                    View.Driver.Move(4, 4);
+                }
+                if (result) MessageBox.Query("Ok !", "Created Account", "Ok");
             };
 
             top.Add(regLabel);
@@ -176,8 +236,8 @@ namespace AlifBank
 
                 else
                 {
-                    /* Everything is ok ! */
-                    // TODO: Go to home screen
+                    running = AdminScreen;
+                    Application.RequestStop();
                 }
             };
             top.Add(login, password, loginText, passText, doneButton);

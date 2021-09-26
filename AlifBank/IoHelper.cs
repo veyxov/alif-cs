@@ -1,14 +1,14 @@
 using System;
 /* Input output helper */
 static class IO {
-    static private bool DEBUG    = true;
+    static private bool DEBUG    = false;
     static private bool COLORFUL = true;
 
     static public void Print<T>(T what, ConsoleColor color = ConsoleColor.White, bool newLine = true) {
         Console.ForegroundColor = COLORFUL ? color : ConsoleColor.White;
-        Console.Write(what);
+        //Console.Write(what);
 
-        if (newLine) Console.Write("\n");
+        //if (newLine) Console.Write("\n");
 
         Console.ResetColor();
     }

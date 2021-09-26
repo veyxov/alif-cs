@@ -4,54 +4,64 @@ static class SQL
 {
     static private string cnnStr = "Data Source=localhost;Initial Catalog=AlifBank;User ID=sa;Password=qwerty112!";
 
-    static private void CreateAccount(string login, string pass, string firstName, string lastName, int age, int gender)
+    static public bool CreateAccount(Account acc)
     {
+        if (ExistAccount(acc.Login)) {
+            throw new Exception($"Account with login {acc.Login} already exist.");
+        }
         var insertQuery =
             "insert into [dbo].[Accounts]" + 
             "([Login], [Password], [FirstName], [LastName], [Age], [Gender])" +
             "VALUES (@login, @password, @firstName, @lastname, @age, @gender)";
 
-        using (var cnn = new SqlConnection(cnnStr)) {
-            using (var cmd = cnn.CreateCommand()) {
-                /* Open the connection */
-                try {
-                    cnn.Open();
-                } catch (Exception ex) {
-                    IO.Print(ex.Message, ConsoleColor.Red);
-                    IO.Print("Cannot open connection !", ConsoleColor.Red);
-                }
-                IO.Debug("Connection opened !");
+        try {
+            using (var cnn = new SqlConnection(cnnStr)) {
+                using (var cmd = cnn.CreateCommand()) {
+                    /* Open the connection */
+                    try {
+                        cnn.Open();
+                    } catch (Exception ex) {
+                        IO.Print(ex.Message, ConsoleColor.Red);
+                        IO.Print("Cannot open connection !", ConsoleColor.Red);
+                    }
+                    IO.Debug("Connection opened !");
 
-                /* Create the command */
-                cmd.CommandText = insertQuery;
-                /* Add parameters */
-                cmd.Parameters.AddWithValue("@login", login);
-                cmd.Parameters.AddWithValue("@password", pass);
-                cmd.Parameters.AddWithValue("@firstName", firstName);
-                cmd.Parameters.AddWithValue("@lastName", lastName);
-                cmd.Parameters.AddWithValue("@age", age);
-                cmd.Parameters.AddWithValue("@gender", gender);
+                    /* Create the command */
+                    cmd.CommandText = insertQuery;
+                    /* Add parameters */
+                    cmd.Parameters.AddWithValue("@login",     acc.Login);
+                    cmd.Parameters.AddWithValue("@password",  acc.Password);
+                    cmd.Parameters.AddWithValue("@firstName", acc.FistName);
+                    cmd.Parameters.AddWithValue("@lastName",  acc.LastName);
+                    cmd.Parameters.AddWithValue("@age",       acc.Age);
+                    cmd.Parameters.AddWithValue("@gender",    acc.Gender);
 
-                /* Try to run the command */
+                    /* Try to run the command */
 
-                int result = 0;
-                try {
-                    result = cmd.ExecuteNonQuery();
-                } catch (Exception ex) {
-                    IO.Print(ex.Message, ConsoleColor.Red);
-                    IO.Print("Cannot execute query !", ConsoleColor.Red);
-                }
+                    int result = 0;
+                    try {
+                        result = cmd.ExecuteNonQuery();
+                    } catch (Exception ex) {
+                        IO.Print(ex.Message, ConsoleColor.Red);
+                        IO.Print("Cannot execute query !", ConsoleColor.Red);
+                        return false;
+                    }
 
-                if (result > 0) {
-                    IO.Print($"Account {login} created successfully !", ConsoleColor.Green);
-                } else {
-                    IO.Print($"Cannot create account !", ConsoleColor.Red);
+                    if (result > 0) {
+                        IO.Print($"Account {acc.Login} created successfully !", ConsoleColor.Green);
+                        return true;
+                    } else {
+                        IO.Print($"Cannot create account !", ConsoleColor.Red);
+                        return false;
+                    }
                 }
             }
+        } catch (Exception ex) {
+            throw new Exception(ex.Message);
         }
     }
     static public void Register() {
-        var phoneNumber = IO.Get<string>("Input your number: ");
+
     }
 
     static public bool Auth(string login, string pass) {
@@ -132,17 +142,17 @@ static class SQL
 }
 
 public class Account {
-    int Id          { get; set; }
-    string Login    { get; set; }
-    string Password { get; set; }
-    string FistName { get; set; }
-    string LastName { get; set; }
-    int age         { get; set; }
-    int gender      { get; set; }
+    public int Id          { get; set; }
+    public string Login    { get; set; }
+    public string Password { get; set; }
+    public string FistName { get; set; }
+    public string LastName { get; set; }
+    public int Age         { get; set; }
+    public int Gender      { get; set; }
 }
 
 public class Transaction {
-    int Id          { get; set; }
-    int AccountId   { get; set; }
-    decimal Amount  { get; set; }
+    public int Id          { get; set; }
+    public int AccountId   { get; set; }
+    public decimal Amount  { get; set; }
 }
