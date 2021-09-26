@@ -91,7 +91,7 @@ namespace AlifBank
             var purposeLabel = new Label("Delay history: ")
             {
                 X = Pos.Center(),
-                Y = Pos.Bottom(creditHistoryRadio)
+                Y = Pos.Bottom(delayRadio)
             };
 
             var purposeRadio = new RadioGroup(new ustring[]
@@ -109,7 +109,7 @@ namespace AlifBank
             var limitLabel = new Label("Delay history: ")
             {
                 X = Pos.Center(),
-                Y = Pos.Bottom(creditHistoryRadio)
+                Y = Pos.Bottom(purposeRadio)
             };
 
             var limitRadio = new RadioGroup(new ustring[]
@@ -119,7 +119,7 @@ namespace AlifBank
             })
             {
                 X = Pos.Center(),
-                Y = Pos.Bottom(purposeLabel)
+                Y = Pos.Bottom(limitLabel)
             };
 
             top.Add(marStatusLabel, marStatusRadio);
