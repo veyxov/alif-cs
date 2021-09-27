@@ -148,6 +148,7 @@ namespace AlifBank
                                                      sPurpose,
                                                      sDelHistory,
                                                      sLimit);
+                // TODO: remove this :)
                 MessageBox.Query("Results", points.ToString(), "Ok");
                 if (points > Constants.MIN_POINTS) {
                     throw new NotImplementedException();
@@ -283,6 +284,12 @@ namespace AlifBank
                 Y = Pos.Bottom(genderLable)
             };
 
+            var isAdminCheckBox = new CheckBox("I am an admin")
+            {
+                X = Pos.Center(),
+                Y = Pos.Bottom(genderRadio)
+            };
+
             var submitButton = new Button("Submit")
             {
                 X = Pos.Center(),
@@ -299,17 +306,16 @@ namespace AlifBank
                     Login = loginText.Text.ToString(),
                     Password = passText.Text.ToString(),
                     Gender = genderRadio.SelectedItem,
-
+                    IsAdmin = isAdminCheckBox.Checked
                 };
                 bool result = false;
                 try
                 {
-                    SQL.CreateAccount(newAccount);
+                    result = SQL.CreateAccount(newAccount);
                 }
                 catch (Exception ex)
                 {
                     MessageBox.ErrorQuery("Error !", ex.Message, "Ok");
-                    View.Driver.Move(4, 4);
                 }
                 if (result) MessageBox.Query("Ok !", "Created Account", "Ok");
             };
@@ -321,6 +327,7 @@ namespace AlifBank
             top.Add(loginLab, loginText);
             top.Add(passLab, passText);
             top.Add(genderLable, genderRadio);
+            top.Add(isAdminCheckBox);
             top.Add(submitButton);
             Application.Run();
         }
@@ -376,8 +383,13 @@ namespace AlifBank
                 else
                 {
                     currentLogin = loginRez;
-                    running = AdminScreen;
-                    Application.RequestStop();
+                    // Check that the logined user is an administrator
+                    if (SQL.GetAccountData(currentLogin).IsAdmin) {
+                        running = AdminScreen;
+                        Application.RequestStop();
+                    } else {
+                        throw new NotImplementedException();
+                    }
                 }
             };
             top.Add(login, password, loginText, passText, doneButton);
@@ -392,13 +404,13 @@ namespace AlifBank
             var helloLabe = new Label("Hello and welcome !")
             {
                 X = Pos.Center(),
-                Y = Pos.Percent(50f)
+                  Y = Pos.Percent(50f)
             };
 
             var loginButton = new Button("Login")
             {
                 X = Pos.Center(),
-                Y = Pos.Bottom(helloLabe),
+                  Y = Pos.Bottom(helloLabe),
             };
 
             loginButton.Clicked += () =>
@@ -410,7 +422,7 @@ namespace AlifBank
             var registerButton = new Button("Register")
             {
                 X = Pos.Right(loginButton),
-                Y = Pos.Bottom(helloLabe)
+                  Y = Pos.Bottom(helloLabe)
             };
 
             registerButton.Clicked += () =>

@@ -16,6 +16,6 @@ create TABLE Accounts (
 create TABLE Transactions(
     Id INT IDENTITY PRIMARY KEY NOT NULL,
     Account_Id INT REFERENCES Accounts(Id) NOT NULL,
-    Amount DECIMAL(100, 2) NOT NULL,
+    Amount DECIMAL(20, 2) NOT NULL,
     Type NVARCHAR(200) NOT NULL,
 )

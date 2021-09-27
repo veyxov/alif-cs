@@ -47,7 +47,8 @@ static class SQL
                             FistName = result.GetString(3),
                             LastName = result.GetString(4),
                             Age      = result.GetInt32(5),
-                            Gender   = result.GetInt32(6)
+                            Gender   = result.GetInt32(6),
+                            IsAdmin  = result.GetInt32(7) == 0 ? false : true
                     };
                 }
             }
@@ -63,8 +64,8 @@ static class SQL
         }
         var insertQuery =
             "insert into [dbo].[Accounts]" + 
-            "([Login], [Password], [FirstName], [LastName], [Age], [Gender])" +
-            "VALUES (@login, @password, @firstName, @lastname, @age, @gender)";
+            "([Login], [Password], [FirstName], [LastName], [Age], [Gender], [Is_Admin])" +
+            "VALUES (@login, @password, @firstName, @lastname, @age, @gender, @isAdmin)";
 
         try {
             using (var cnn = new SqlConnection(cnnStr)) {
@@ -73,8 +74,7 @@ static class SQL
                     try {
                         cnn.Open();
                     } catch (Exception ex) {
-                        IO.Print(ex.Message, ConsoleColor.Red);
-                        IO.Print("Cannot open connection !", ConsoleColor.Red);
+                        throw new Exception(ex.Message);
                     }
                     IO.Debug("Connection opened !");
 
@@ -87,6 +87,7 @@ static class SQL
                     cmd.Parameters.AddWithValue("@lastName",  acc.LastName);
                     cmd.Parameters.AddWithValue("@age",       acc.Age);
                     cmd.Parameters.AddWithValue("@gender",    acc.Gender);
+                    cmd.Parameters.AddWithValue("@isAdmin",   acc.IsAdmin);
 
                     /* Try to run the command */
 
@@ -94,16 +95,12 @@ static class SQL
                     try {
                         result = cmd.ExecuteNonQuery();
                     } catch (Exception ex) {
-                        IO.Print(ex.Message, ConsoleColor.Red);
-                        IO.Print("Cannot execute query !", ConsoleColor.Red);
-                        return false;
+                        throw new Exception(ex.Message);
                     }
 
                     if (result > 0) {
-                        IO.Print($"Account {acc.Login} created successfully !", ConsoleColor.Green);
                         return true;
                     } else {
-                        IO.Print($"Cannot create account !", ConsoleColor.Red);
                         return false;
                     }
                 }
@@ -201,6 +198,7 @@ public class Account {
     public string LastName { get; set; }
     public int Age         { get; set; }
     public int Gender      { get; set; }
+    public bool IsAdmin    { get; set; }
 }
 
 public class Transaction {
