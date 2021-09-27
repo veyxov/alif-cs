@@ -217,6 +217,7 @@ namespace AlifBank
                             } catch (Exception ex) {
                                 MessageBox.ErrorQuery("Error !", ex.Message, "Ok");
                             }
+                            inputWin.RequestStop();
                         };
 
                         inputWin.Add(inputLabel, inputText, curr, submitButton);
