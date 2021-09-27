@@ -8,6 +8,16 @@ namespace AlifBank
     class tui
     {
         public static string currentLogin = null;
+        public static Action currentLoginPriv = null;
+        static void UserScreen()
+        {
+            Application.Init();
+            var top = Application.Top;
+
+            top.Add(new Label("HE LOO USR !"));
+
+            Application.Run();
+        }
         static void CreateCreditScreen()
         {
             Application.Init();
@@ -130,15 +140,16 @@ namespace AlifBank
                 Y = Pos.Bottom(limitRadio),
             };
 
-            submitButton.Clicked += () => {
+            submitButton.Clicked += () =>
+            {
                 // Newly entered data
                 var sMaritStatus = marStatusRadio.SelectedItem;
-                var sIsFromTj    = isFromTJ.Checked;
-                var sLoanAmount =  loanFromTotalRadio.SelectedItem;
+                var sIsFromTj = isFromTJ.Checked;
+                var sLoanAmount = loanFromTotalRadio.SelectedItem;
                 var sCredHistory = creditHistoryRadio.SelectedItem;
-                var sPurpose     = purposeRadio.SelectedItem;
-                var sDelHistory  = delayRadio.SelectedItem;
-                var sLimit       = limitRadio.SelectedItem;
+                var sPurpose = purposeRadio.SelectedItem;
+                var sDelHistory = delayRadio.SelectedItem;
+                var sLimit = limitRadio.SelectedItem;
 
                 var points = Program.CalculatePoints(currentLogin,
                                                      sMaritStatus,
@@ -150,11 +161,38 @@ namespace AlifBank
                                                      sLimit);
                 // TODO: remove this :)
                 MessageBox.Query("Results", points.ToString(), "Ok");
-                if (points > Constants.MIN_POINTS) {
-                    throw new NotImplementedException();
-                } else {
+                if (points > Constants.MIN_POINTS)
+                {
+                    try
+                    {
+
+                    }
+                    catch
+                    {
+
+                    }
+                    finally
+                    {
+                        running = currentLoginPriv;
+                        Application.RequestStop();
+                    }
+                }
+                else
+                {
                     MessageBox.ErrorQuery("Sorry ...", Constants.SorryMessage, "Ok");
                 }
+            };
+
+            var backButton = new Button("Back")
+            {
+                X = Pos.Percent(5f),
+                Y = Pos.Percent(95f)
+            };
+
+            backButton.Clicked += () =>
+            {
+                running = AdminScreen;
+                Application.RequestStop();
             };
 
 
@@ -166,6 +204,7 @@ namespace AlifBank
             top.Add(purposeLabel, purposeRadio);
             top.Add(limitLabel, limitRadio);
             top.Add(submitButton);
+            top.Add(backButton);
             Application.Run();
         }
         static void AdminScreen()
@@ -191,7 +230,22 @@ namespace AlifBank
                 Application.RequestStop();
             };
 
+            var backButton = new Button("Back")
+            {
+                X = Pos.Percent(5f),
+                Y = Pos.Percent(95f)
+            };
+
+            backButton.Clicked += () =>
+            {
+                // TODO Create proper logout
+                currentLogin = null;
+                running = LoginScreen;
+                Application.RequestStop();
+            };
+
             top.Add(welcomeLabel, newCreditButton);
+            top.Add(backButton);
             Application.Run();
         }
         static void RegisterScreen()
@@ -365,6 +419,18 @@ namespace AlifBank
                 X = Pos.Center(),
                 Y = Pos.Bottom(passText) + 3,
             };
+            var backButton = new Button("Back")
+            {
+                X = Pos.Percent(5f),
+                Y = Pos.Percent(95f)
+            };
+
+            backButton.Clicked += () =>
+            {
+                running = MainScreen;
+                Application.RequestStop();
+            };
+
             doneButton.Clicked += () =>
             {
                 string loginRez = loginText.Text.ToString();
@@ -384,15 +450,19 @@ namespace AlifBank
                 {
                     currentLogin = loginRez;
                     // Check that the logined user is an administrator
-                    if (SQL.GetAccountData(currentLogin).IsAdmin) {
-                        running = AdminScreen;
-                        Application.RequestStop();
-                    } else {
-                        throw new NotImplementedException();
+                    if (SQL.GetAccountData(currentLogin).IsAdmin)
+                    {
+                        currentLoginPriv = AdminScreen;
                     }
+                    else
+                    {
+                        currentLoginPriv = UserScreen;
+                    }
+                    running = currentLoginPriv;
+                    Application.RequestStop();
                 }
             };
-            top.Add(login, password, loginText, passText, doneButton);
+            top.Add(login, password, loginText, passText, doneButton, backButton);
 
             Application.Run();
         }
@@ -404,13 +474,13 @@ namespace AlifBank
             var helloLabe = new Label("Hello and welcome !")
             {
                 X = Pos.Center(),
-                  Y = Pos.Percent(50f)
+                Y = Pos.Percent(50f)
             };
 
             var loginButton = new Button("Login")
             {
                 X = Pos.Center(),
-                  Y = Pos.Bottom(helloLabe),
+                Y = Pos.Bottom(helloLabe),
             };
 
             loginButton.Clicked += () =>
@@ -422,7 +492,7 @@ namespace AlifBank
             var registerButton = new Button("Register")
             {
                 X = Pos.Right(loginButton),
-                  Y = Pos.Bottom(helloLabe)
+                Y = Pos.Bottom(helloLabe)
             };
 
             registerButton.Clicked += () =>
@@ -431,7 +501,19 @@ namespace AlifBank
                 Application.RequestStop();
             };
 
+            var exitButton = new Button("Exit")
+            {
+                X = Pos.Percent(5f),
+                Y = Pos.Percent(95f)
+            };
+
+            exitButton.Clicked += () =>
+            {
+                // TODO: Fix application closure
+                Application.Shutdown();
+            };
             top.Add(loginButton, registerButton, helloLabe);
+            top.Add(exitButton);
             Application.Run();
         }
 
