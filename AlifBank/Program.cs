@@ -4,6 +4,7 @@
     {
         static public int MIN_POINTS = 11;
         static public string SorryMessage = "You cannot create a credit";
+        static public string Congrats = "You can create a credit !";
     }
     static public class Program
     {

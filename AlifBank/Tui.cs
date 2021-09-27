@@ -23,10 +23,22 @@ namespace AlifBank
             Application.Init();
             var top = Application.Top;
 
-            var marStatusLabel = new Label("Maritial status")
+            var loginLabel = new Label("Login: ")
             {
                 X = Pos.Center(),
                 Y = 1
+            };
+            
+            var loginText = new TextField() 
+            {
+                X = Pos.Center(),
+                Y = Pos.Bottom(loginLabel),
+                Width = Dim.Percent(30f)
+            };
+            var marStatusLabel = new Label("Maritial status")
+            {
+                X = Pos.Center(),
+                Y = Pos.Bottom(loginText)
             };
 
             var marStatusRadio = new RadioGroup(new ustring[]
@@ -143,6 +155,7 @@ namespace AlifBank
             submitButton.Clicked += () =>
             {
                 // Newly entered data
+                var sLogin = loginText.Text.ToString();
                 var sMaritStatus = marStatusRadio.SelectedItem;
                 var sIsFromTj = isFromTJ.Checked;
                 var sLoanAmount = loanFromTotalRadio.SelectedItem;
@@ -151,7 +164,7 @@ namespace AlifBank
                 var sDelHistory = delayRadio.SelectedItem;
                 var sLimit = limitRadio.SelectedItem;
 
-                var points = Program.CalculatePoints(currentLogin,
+                var points = Program.CalculatePoints(sLogin,
                                                      sMaritStatus,
                                                      sIsFromTj,
                                                      sLoanAmount,
@@ -165,16 +178,55 @@ namespace AlifBank
                 {
                     try
                     {
+                        MessageBox.Query("Congrats", Constants.Congrats, "Ok");
 
+                        var inputWin = new Window("Input the amount")
+                        {
+                            X = Pos.Center(),
+                            Y = Pos.Center()
+                        };
+
+                        var inputLabel = new Label("Amount: ")
+                        {
+                            X = Pos.Center(),
+                            Y = Pos.Center()
+                        };
+                        var inputText = new TextField()
+                        {
+                            X = Pos.Right(inputLabel),
+                            Y = Pos.Center(),
+                            Width = 10
+                        };
+
+                        var curr = new Label("Somoni")
+                        {
+                            X = Pos.Right(inputText),
+                            Y = Pos.Center()
+                        };
+
+                        var submitButton = new Button("Submit")
+                        {
+                            X = Pos.Center(),
+                            Y = Pos.Bottom(curr),
+                        };
+
+                        submitButton.Clicked += () =>
+                        {
+                            try {
+                                SQL.MakeTransaction(sLogin, decimal.Parse(inputText.Text.ToString()));
+                            } catch (Exception ex) {
+                                MessageBox.ErrorQuery("Error !", ex.Message, "Ok");
+                            }
+                        };
+
+                        inputWin.Add(inputLabel, inputText, curr, submitButton);
+                        //inputWin.Add();
+
+                        top.Add(inputWin);
                     }
                     catch
                     {
 
-                    }
-                    finally
-                    {
-                        running = currentLoginPriv;
-                        Application.RequestStop();
                     }
                 }
                 else
@@ -196,6 +248,7 @@ namespace AlifBank
             };
 
 
+            top.Add(loginLabel, loginText);
             top.Add(marStatusLabel, marStatusRadio);
             top.Add(isFromTJ);
             top.Add(loanFromTotalLable, loanFromTotalRadio);
@@ -450,7 +503,7 @@ namespace AlifBank
                 {
                     currentLogin = loginRez;
                     // Check that the logined user is an administrator
-                    if (SQL.GetAccountData(currentLogin).IsAdmin)
+                    if (SQL.IsAdmin(currentLogin))
                     {
                         currentLoginPriv = AdminScreen;
                     }

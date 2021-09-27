@@ -8,6 +8,50 @@ static class SQL
     {
         throw new NotImplementedException();
     }
+    static public void MakeTransaction(string login, decimal amount)
+    {
+        if (!ExistAccount(login)) throw new Exception("Account does not exist");
+        if (amount == 0)          throw new Exception("Amount can not be zero");
+        if (IsAdmin(login))       throw new Exception("Admin cannot interact with money");
+
+        try {
+            var insertQuery = "INSERT INTO Transactions ([Account_Id], [Amount], [Type]) VALUES(@accountID, @amount, 'D')";
+            using (var cnn = new SqlConnection(cnnStr)) {
+                using (var cmd = cnn.CreateCommand()) {
+                    /* Open the connection */
+                    try {
+                        cnn.Open();
+                    } catch (Exception ex) {
+                        throw new Exception(ex.Message);
+                    }
+                    /* Create the command */
+                    cmd.CommandText = insertQuery;
+
+                    cmd.Parameters.AddWithValue("@AccountId", GetIdByLogin(login));
+                    cmd.Parameters.AddWithValue("@amount", amount);
+
+                    /* Try to run the command */
+                    int result = 0;
+                    try {
+                        result = cmd.ExecuteNonQuery();
+                        if (result <= 0) throw new Exception("Cannot make transaction");
+                    } catch (Exception ex) {
+                        throw new Exception(ex.Message);
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            throw new Exception(ex.Message);
+        }
+    }
+    static public bool IsAdmin(string login)
+    {
+        return SQL.GetAccountData(login).IsAdmin;
+    }
+    static public int GetIdByLogin(string login)
+    {
+        return GetAccountData(login).Id;
+    }
     static public Account GetAccountData(string login)
     {
         var getDataQuery =
