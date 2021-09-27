@@ -149,6 +149,11 @@ namespace AlifBank
                                                      sDelHistory,
                                                      sLimit);
                 MessageBox.Query("Results", points.ToString(), "Ok");
+                if (points > Constants.MIN_POINTS) {
+                    throw new NotImplementedException();
+                } else {
+                    MessageBox.ErrorQuery("Sorry ...", Constants.SorryMessage, "Ok");
+                }
             };
 
 

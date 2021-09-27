@@ -1,5 +1,10 @@
 ﻿namespace MainApp
 {
+    static public class Constants
+    {
+        static public int MIN_POINTS = 11;
+        static public string SorryMessage = "You cannot create a credit";
+    }
     static public class Program
     {
         static public int CalculatePoints(string login, int maritialStatus, bool isFromTj, int loanAmount, int credHistory, int purpose, int delHistory, int limit)
@@ -29,8 +34,8 @@
 
             // Citizenship
             if (isFromTj)                 result += 1;
-
             // Loan
+
             if (loanAmount == 0)          result += 4;
             else if (loanAmount == 1)     result += 3;
             else if (loanAmount == 2)     result += 2;
