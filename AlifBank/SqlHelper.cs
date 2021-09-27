@@ -4,6 +4,10 @@ static class SQL
 {
     static private string cnnStr = "Data Source=localhost;Initial Catalog=AlifBank;User ID=sa;Password=qwerty112!";
 
+    static public void DepositToAccount(string login, decimal amount)
+    {
+        throw new NotImplementedException();
+    }
     static public Account GetAccountData(string login)
     {
         var getDataQuery =

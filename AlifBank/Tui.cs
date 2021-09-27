@@ -80,17 +80,17 @@ namespace AlifBank
 
             var delayRadio = new RadioGroup(new ustring[]
             {
-              "less than 3",
-              "4",
-              "5 - 7",
               "more than 7",
+              "5 - 7",
+              "4",
+              "less than 3",
             })
             {
                 X = Pos.Center(),
                 Y = Pos.Bottom(delayLable)
             };
 
-            var purposeLabel = new Label("Delay history: ")
+            var purposeLabel = new Label("Purpose: ")
             {
                 X = Pos.Center(),
                 Y = Pos.Bottom(delayRadio)
@@ -131,12 +131,26 @@ namespace AlifBank
             };
 
             submitButton.Clicked += () => {
-                var points = Program.CalculatePoints(currentLogin);
+                // Newly entered data
+                var sMaritStatus = marStatusRadio.SelectedItem;
+                var sIsFromTj    = isFromTJ.Checked;
+                var sLoanAmount =  loanFromTotalRadio.SelectedItem;
+                var sCredHistory = creditHistoryRadio.SelectedItem;
+                var sPurpose     = purposeRadio.SelectedItem;
+                var sDelHistory  = delayRadio.SelectedItem;
+                var sLimit       = limitRadio.SelectedItem;
 
-                var sLimit   = limitRadio.SelectedItem;
-                var sPurPose = purposeRadio.SelectedItem;
-                var sDelay   = delayRadio.SelectedItem;
+                var points = Program.CalculatePoints(currentLogin,
+                                                     sMaritStatus,
+                                                     sIsFromTj,
+                                                     sLoanAmount,
+                                                     sCredHistory,
+                                                     sPurpose,
+                                                     sDelHistory,
+                                                     sLimit);
+                MessageBox.Query("Results", points.ToString(), "Ok");
             };
+
 
             top.Add(marStatusLabel, marStatusRadio);
             top.Add(isFromTJ);
