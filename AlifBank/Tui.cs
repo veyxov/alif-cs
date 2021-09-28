@@ -28,8 +28,8 @@ namespace AlifBank
                 X = Pos.Center(),
                 Y = 1
             };
-            
-            var loginText = new TextField() 
+
+            var loginText = new TextField()
             {
                 X = Pos.Center(),
                 Y = Pos.Bottom(loginLabel),
@@ -164,19 +164,18 @@ namespace AlifBank
                 var sDelHistory = delayRadio.SelectedItem;
                 var sLimit = limitRadio.SelectedItem;
 
-                var points = Program.CalculatePoints(sLogin,
-                                                     sMaritStatus,
-                                                     sIsFromTj,
-                                                     sLoanAmount,
-                                                     sCredHistory,
-                                                     sPurpose,
-                                                     sDelHistory,
-                                                     sLimit);
-                // TODO: remove this :)
-                MessageBox.Query("Results", points.ToString(), "Ok");
-                if (points > Constants.MIN_POINTS)
+                try
                 {
-                    try
+                    var points = Program.CalculatePoints(sLogin,
+                            sMaritStatus,
+                            sIsFromTj,
+                            sLoanAmount,
+                            sCredHistory,
+                            sPurpose,
+                            sDelHistory,
+                            sLimit);
+
+                    if (points > Constants.MIN_POINTS)
                     {
                         MessageBox.Query("Congrats", Constants.Congrats, "Ok");
 
@@ -210,11 +209,16 @@ namespace AlifBank
                             Y = Pos.Bottom(curr),
                         };
 
+                        inputText.SetFocus();
+
                         submitButton.Clicked += () =>
                         {
-                            try {
+                            try
+                            {
                                 SQL.MakeTransaction(sLogin, decimal.Parse(inputText.Text.ToString()));
-                            } catch (Exception ex) {
+                            }
+                            catch (Exception ex)
+                            {
                                 MessageBox.ErrorQuery("Error !", ex.Message, "Ok");
                             }
                             inputWin.RequestStop();
@@ -225,14 +229,14 @@ namespace AlifBank
 
                         top.Add(inputWin);
                     }
-                    catch
+                    else
                     {
-
+                        MessageBox.ErrorQuery("Sorry ...", Constants.SorryMessage, "Ok");
                     }
                 }
-                else
+                catch (Exception ex)
                 {
-                    MessageBox.ErrorQuery("Sorry ...", Constants.SorryMessage, "Ok");
+                    MessageBox.ErrorQuery("Error !", ex.Message, "Ok");
                 }
             };
 
