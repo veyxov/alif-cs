@@ -128,11 +128,12 @@ static class SQL
 
     static public DataTable GetAccountDataAllTableSpecific(string login)
     {
+        if (!ExistAccount(login)) throw new Exception($"Account {login} not found");
         return getAccountDataAllTable(login, "select * from [dbo].[Accounts] WHERE Login = @login");
     }
-    static public DataTable GetAccountDataAllTableAll(string login)
+    static public DataTable GetAccountDataAllTableAll()
     {
-        return getAccountDataAllTable(login, "select * from [dbo].[Accounts]");
+        return getAccountDataAllTable("", "select * from [dbo].[Accounts]");
     }
     static private DataTable getAccountDataAllTable(string login, string getDataQuery)
     {
@@ -159,6 +160,7 @@ static class SQL
 
                 var adapter = new SqlDataAdapter(cmd);
                 adapter.Fill(resTable);
+                cmd.Parameters.Clear();
             }
         }
         return resTable;

@@ -47,17 +47,30 @@ namespace AlifBank
                 Y = Pos.Percent(95f)
             };
 
+            var backToAdminButton = new Button("Back to admin screen")
+            {
+                X = Pos.Percent(5f),
+                Y = Pos.Percent(95f)
+            };
+
+            backToAdminButton.Clicked += () => {
+                running = AdminScreen;
+                Application.RequestStop();
+            };
+
             backButton.Clicked += () =>
             {
                 top.RemoveAll();
                 top.Add(loginLabel, loginText);
                 top.Add(getUserDataButton);
+                top.Add(backToAdminButton);
             };
             getUserDataButton.Clicked += () =>
             {
                 try
                 {
-                    tableView.Table = SQL.GetAccountDataAllTable(loginText.Text.ToString());
+                    if (loginText.Text.ToString() == "all") tableView.Table = SQL.GetAccountDataAllTableAll();
+                    else tableView.Table = SQL.GetAccountDataAllTableSpecific(loginText.Text.ToString());
                 }
                 catch (Exception ex)
                 {
@@ -70,6 +83,7 @@ namespace AlifBank
             };
             top.Add(loginLabel, loginText);
             top.Add(getUserDataButton);
+            top.Add(backToAdminButton);
             Application.Run();
         }
 
@@ -509,6 +523,18 @@ namespace AlifBank
                 if (result) MessageBox.Query("Ok !", "Created Account", "Ok");
             };
 
+            var backButton = new Button("Back")
+            {
+                X = Pos.Percent(5f),
+                Y = Pos.Percent(95f)
+            };
+
+            backButton.Clicked += () =>
+            {
+                running = MainScreen;
+                Application.RequestStop();
+            };
+
             top.Add(regLabel);
             top.Add(fnameLabel, fnameText);
             top.Add(lnameLabel, lnameText);
@@ -518,6 +544,8 @@ namespace AlifBank
             top.Add(genderLable, genderRadio);
             top.Add(isAdminCheckBox);
             top.Add(submitButton);
+            top.Add(backButton);
+
             Application.Run();
         }
         static void LoginScreen()
@@ -554,7 +582,7 @@ namespace AlifBank
                 X = Pos.Center(),
                 Y = Pos.Bottom(passText) + 3,
             };
-            var backButton = new Button("Back")
+            var backButton = new Button("Back to main")
             {
                 X = Pos.Percent(5f),
                 Y = Pos.Percent(95f)
