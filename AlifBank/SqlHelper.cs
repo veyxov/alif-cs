@@ -42,6 +42,7 @@ static class SQL
                     cmd.CommandText = insertQuery;
 
                     cmd.Parameters.AddWithValue("@AccountId", GetIdByLogin(login));
+                    if (type == "C") amount *= -1;
                     cmd.Parameters.AddWithValue("@amount", amount);
                     cmd.Parameters.AddWithValue("@type", type);
 
@@ -208,9 +209,9 @@ static class SQL
                         result = cmd.ExecuteReader();
                         if (!result.HasRows) throw new Exception("No data !");
                     }
-                    catch
+                    catch (Exception ex)
                     {
-
+                        throw new Exception(ex.Message);
                     }
                     while (result.Read())
                     {
@@ -240,7 +241,7 @@ static class SQL
     static public decimal CalculateAccountBalance(string login)
     {
         var getSumQuery =
-            "select SUM([Amount]) FROM [dbo].[Transactions] WHERE [Account_Id] = @AccountID";
+            "select SUM([Amount]) AS Balance FROM [dbo].[Transactions] WHERE [Account_Id] = @AccountID";
 
         decimal balance = 0;
         try
@@ -267,17 +268,15 @@ static class SQL
 
                     /* Try to run the command */
 
-                    SqlDataReader result = null;
-                    try
+                    var reader = cmd.ExecuteReader();
+                    if(reader.HasRows)
                     {
-                        result = cmd.ExecuteReader();
-                        result.Read();
-
-                        balance = result.GetDecimal(0);
-                    }
-                    catch (Exception ex)
-                    {
-                        throw new Exception(ex.Message);
+                        while (reader.Read())
+                        {
+                            balance = decimal.Parse(reader["Balance"].ToString());
+                        }
+                    } else {
+                        throw new Exception("Sum returned NULL");
                     }
 
                 }
