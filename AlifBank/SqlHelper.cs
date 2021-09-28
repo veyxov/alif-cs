@@ -17,7 +17,7 @@ static class SQL
     }
     static private void makeTransaction(string login, decimal amount, string type)
     {
-        if (!ExistAccount(login)) throw new Exception("Account does not exist");
+        if (!ExistAccount(login)) throw new Exception($"Account {login} does not exist");
         if (amount <= 0) throw new Exception("Amount should be positive");
         if (IsAdmin(login)) throw new Exception("Admin cannot interact with money");
         if (type != "C" && type != "D") throw new Exception("Invalid transaction type");

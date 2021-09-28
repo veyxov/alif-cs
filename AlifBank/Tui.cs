@@ -9,6 +9,59 @@ namespace AlifBank
     {
         public static string currentLogin = null;
         public static Action currentLoginPriv = null;
+        public static string currentClientLogin = null;
+
+        static void GetCurrentClientScreen()
+        {
+            Application.Init();
+            var top = Application.Top;
+            var loginLabel = new Label("Login of the client: ")
+            {
+                X = Pos.Center(),
+                Y = 1
+            };
+
+            var loginText = new TextField()
+            {
+                X = Pos.Center(),
+                Y = Pos.Bottom(loginLabel),
+                Width = Dim.Percent(30f)
+            };
+
+            var doneButton = new Button("Done")
+            {
+                X = Pos.Center(),
+                Y = Pos.Bottom(loginText) + 3,
+            };
+            try
+            {
+                doneButton.Clicked += () =>
+                {
+                    var tmpLogin = loginText.Text.ToString();
+                    try
+                    {
+                        if (!SQL.ExistAccount(tmpLogin)) throw new Exception($"Account {tmpLogin} not found");
+
+                        currentClientLogin = tmpLogin;
+                        running = AdminScreen;
+                        Application.RequestStop();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.ErrorQuery("Error !", ex.Message, "Ok");
+                    }
+
+                };
+
+                top.Add(loginLabel, loginText);
+                top.Add(doneButton);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.ErrorQuery("Error !", ex.Message, "Ok");
+            }
+            Application.Run();
+        }
         static void UserDataScreen()
         {
             Application.Init();
@@ -22,23 +75,10 @@ namespace AlifBank
                 Height = Dim.Fill()
             };
 
-            var loginLabel = new Label("Login: ")
-            {
-                X = Pos.Center(),
-                Y = 1
-            };
-
-            var loginText = new TextField()
-            {
-                X = Pos.Center(),
-                Y = Pos.Bottom(loginLabel),
-                Width = Dim.Percent(30f)
-            };
-
             var getUserDataButton = new Button("Get account data")
             {
                 X = Pos.Center(),
-                Y = Pos.Bottom(loginText)
+                Y = 1
             };
 
             var backButton = new Button("Back")
@@ -53,7 +93,8 @@ namespace AlifBank
                 Y = Pos.Percent(95f)
             };
 
-            backToAdminButton.Clicked += () => {
+            backToAdminButton.Clicked += () =>
+            {
                 running = AdminScreen;
                 Application.RequestStop();
             };
@@ -61,7 +102,6 @@ namespace AlifBank
             backButton.Clicked += () =>
             {
                 top.RemoveAll();
-                top.Add(loginLabel, loginText);
                 top.Add(getUserDataButton);
                 top.Add(backToAdminButton);
             };
@@ -69,8 +109,7 @@ namespace AlifBank
             {
                 try
                 {
-                    if (loginText.Text.ToString() == "all") tableView.Table = SQL.GetAccountDataAllTableAll();
-                    else tableView.Table = SQL.GetAccountDataAllTableSpecific(loginText.Text.ToString());
+                    tableView.Table = SQL.GetAccountDataAllTableSpecific(currentClientLogin);
                 }
                 catch (Exception ex)
                 {
@@ -81,7 +120,6 @@ namespace AlifBank
                 top.Add(tableView);
                 top.Add(backButton);
             };
-            top.Add(loginLabel, loginText);
             top.Add(getUserDataButton);
             top.Add(backToAdminButton);
             Application.Run();
@@ -101,22 +139,10 @@ namespace AlifBank
             Application.Init();
             var top = Application.Top;
 
-            var loginLabel = new Label("Login: ")
-            {
-                X = Pos.Center(),
-                Y = 1
-            };
-
-            var loginText = new TextField()
-            {
-                X = Pos.Center(),
-                Y = Pos.Bottom(loginLabel),
-                Width = Dim.Percent(30f)
-            };
             var marStatusLabel = new Label("Maritial status")
             {
                 X = Pos.Center(),
-                Y = Pos.Bottom(loginText)
+                Y = 1
             };
 
             var marStatusRadio = new RadioGroup(new ustring[]
@@ -233,7 +259,6 @@ namespace AlifBank
             submitButton.Clicked += () =>
             {
                 // Newly entered data
-                var sLogin = loginText.Text.ToString();
                 var sMaritStatus = marStatusRadio.SelectedItem;
                 var sIsFromTj = isFromTJ.Checked;
                 var sLoanAmount = loanFromTotalRadio.SelectedItem;
@@ -244,7 +269,7 @@ namespace AlifBank
 
                 try
                 {
-                    var points = Program.CalculatePoints(sLogin,
+                    var points = Program.CalculatePoints(currentClientLogin,
                             sMaritStatus,
                             sIsFromTj,
                             sLoanAmount,
@@ -253,8 +278,11 @@ namespace AlifBank
                             sDelHistory,
                             sLimit);
 
-                    if (SQL.CalculateAccountBalance(sLogin) < 0) {
-                        throw new Exception("Account is already in debit");
+                    var curBalance = SQL.CalculateAccountBalance(currentClientLogin);
+
+                    if (curBalance < 0)
+                    {
+                        throw new Exception($"Account is already in debit: {curBalance}");
                     }
 
                     if (points > Constants.MIN_POINTS)
@@ -295,7 +323,7 @@ namespace AlifBank
                         {
                             try
                             {
-                                SQL.CreditToAccount(sLogin, decimal.Parse(inputText.Text.ToString()));
+                                SQL.CreditToAccount(currentClientLogin, decimal.Parse(inputText.Text.ToString()));
                                 inputWin.RequestStop();
                             }
                             catch (Exception ex)
@@ -334,7 +362,6 @@ namespace AlifBank
             };
 
 
-            top.Add(loginLabel, loginText);
             top.Add(marStatusLabel, marStatusRadio);
             top.Add(isFromTJ);
             top.Add(loanFromTotalLable, loanFromTotalRadio);
@@ -346,6 +373,10 @@ namespace AlifBank
             top.Add(backButton);
             Application.Run();
         }
+        static void UserTransactsScreen()
+        {
+
+        }
         static void AdminScreen()
         {
             Application.Init();
@@ -355,6 +386,12 @@ namespace AlifBank
             {
                 X = Pos.Center(),
                 Y = 1
+            };
+
+            var userLabel = new Label($"Now you are working with {currentClientLogin}")
+            {
+                X = Pos.Center(),
+                Y = Pos.Bottom(welcomeLabel)
             };
 
             var newCreditButton = new Button("Create new credit for user")
@@ -381,6 +418,18 @@ namespace AlifBank
                 Application.RequestStop();
             };
 
+            var userTransactsButton = new Button("Create new credit for user")
+            {
+                X = Pos.Center(),
+                Y = Pos.Bottom(userDataButton) + 1
+            };
+
+            userTransactsButton.Clicked += () =>
+            {
+                running = UserTransactsScreen;
+                Application.RequestStop();
+            };
+
             var backButton = new Button("Back")
             {
                 X = Pos.Percent(5f),
@@ -396,6 +445,7 @@ namespace AlifBank
             };
 
             top.Add(welcomeLabel, newCreditButton);
+            top.Add(userLabel);
             top.Add(userDataButton);
             top.Add(backButton);
             Application.Run();
@@ -619,12 +669,13 @@ namespace AlifBank
                     if (SQL.IsAdmin(currentLogin))
                     {
                         currentLoginPriv = AdminScreen;
+                        running = GetCurrentClientScreen;
                     }
                     else
                     {
                         currentLoginPriv = UserScreen;
+                        running = UserScreen;
                     }
-                    running = currentLoginPriv;
                     Application.RequestStop();
                 }
             };
