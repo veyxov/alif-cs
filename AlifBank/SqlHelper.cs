@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 static class SQL
 {
@@ -125,6 +126,43 @@ static class SQL
         }
     }
 
+    static public DataTable GetAccountDataAllTableSpecific(string login)
+    {
+        return getAccountDataAllTable(login, "select * from [dbo].[Accounts] WHERE Login = @login");
+    }
+    static public DataTable GetAccountDataAllTableAll(string login)
+    {
+        return getAccountDataAllTable(login, "select * from [dbo].[Accounts]");
+    }
+    static private DataTable getAccountDataAllTable(string login, string getDataQuery)
+    {
+        var resTable = new DataTable();
+
+        using (var cnn = new SqlConnection(cnnStr))
+        {
+            using (var cmd = cnn.CreateCommand())
+            {
+                try
+                {
+                    cnn.Open();
+                }
+                catch (Exception ex)
+                {
+                    IO.Print(ex.Message, ConsoleColor.Red);
+                    IO.Print("Cannot open connection !", ConsoleColor.Red);
+                }
+                IO.Debug("Connection opened !");
+
+                /* Create the command */
+                cmd.CommandText = getDataQuery;
+                cmd.Parameters.AddWithValue("@login", login);
+
+                var adapter = new SqlDataAdapter(cmd);
+                adapter.Fill(resTable);
+            }
+        }
+        return resTable;
+    }
     static public List<Account> GetAccountDataAll(string login)
     {
         var resAccounts = new List<Account>();
@@ -178,7 +216,7 @@ static class SQL
                             Gender = result.GetInt32(6),
                             IsAdmin = result.GetInt32(7) == 0 ? false : true
                         }
-                        );
+                                );
                     }
                 }
             }

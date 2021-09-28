@@ -9,6 +9,70 @@ namespace AlifBank
     {
         public static string currentLogin = null;
         public static Action currentLoginPriv = null;
+        static void UserDataScreen()
+        {
+            Application.Init();
+            var top = Application.Top;
+
+            var tableView = new TableView()
+            {
+                X = 1,
+                Y = 1,
+                Width = Dim.Fill(),
+                Height = Dim.Fill()
+            };
+
+            var loginLabel = new Label("Login: ")
+            {
+                X = Pos.Center(),
+                Y = 1
+            };
+
+            var loginText = new TextField()
+            {
+                X = Pos.Center(),
+                Y = Pos.Bottom(loginLabel),
+                Width = Dim.Percent(30f)
+            };
+
+            var getUserDataButton = new Button("Get account data")
+            {
+                X = Pos.Center(),
+                Y = Pos.Bottom(loginText)
+            };
+
+            var backButton = new Button("Back")
+            {
+                X = Pos.Percent(5f),
+                Y = Pos.Percent(95f)
+            };
+
+            backButton.Clicked += () =>
+            {
+                top.RemoveAll();
+                top.Add(loginLabel, loginText);
+                top.Add(getUserDataButton);
+            };
+            getUserDataButton.Clicked += () =>
+            {
+                try
+                {
+                    tableView.Table = SQL.GetAccountDataAllTable(loginText.Text.ToString());
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.ErrorQuery("Error !", ex.Message, "Ok");
+                }
+
+                top.RemoveAll();
+                top.Add(tableView);
+                top.Add(backButton);
+            };
+            top.Add(loginLabel, loginText);
+            top.Add(getUserDataButton);
+            Application.Run();
+        }
+
         static void UserScreen()
         {
             Application.Init();
@@ -288,6 +352,18 @@ namespace AlifBank
                 Application.RequestStop();
             };
 
+            var userDataButton = new Button("Get user data")
+            {
+                X = Pos.Center(),
+                Y = Pos.Bottom(newCreditButton) + 3
+            };
+
+            userDataButton.Clicked += () =>
+            {
+                running = UserDataScreen;
+                Application.RequestStop();
+            };
+
             var backButton = new Button("Back")
             {
                 X = Pos.Percent(5f),
@@ -303,6 +379,7 @@ namespace AlifBank
             };
 
             top.Add(welcomeLabel, newCreditButton);
+            top.Add(userDataButton);
             top.Add(backButton);
             Application.Run();
         }
