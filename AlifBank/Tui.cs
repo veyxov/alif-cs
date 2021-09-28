@@ -92,7 +92,7 @@ namespace AlifBank
             Application.Init();
             var top = Application.Top;
 
-
+            throw new NotImplementedException();
 
             Application.Run();
         }
@@ -253,6 +253,10 @@ namespace AlifBank
                             sDelHistory,
                             sLimit);
 
+                    if (SQL.CalculateAccountBalance(sLogin) < 0) {
+                        throw new Exception("Account is already in debit");
+                    }
+
                     if (points > Constants.MIN_POINTS)
                     {
                         MessageBox.Query("Congrats", Constants.Congrats, "Ok");
@@ -287,19 +291,18 @@ namespace AlifBank
                             Y = Pos.Bottom(curr),
                         };
 
-                        inputText.SetFocus();
-
                         submitButton.Clicked += () =>
                         {
                             try
                             {
-                                SQL.MakeTransaction(sLogin, decimal.Parse(inputText.Text.ToString()));
+                                SQL.CreditToAccount(sLogin, decimal.Parse(inputText.Text.ToString()));
+                                inputWin.RequestStop();
                             }
                             catch (Exception ex)
                             {
                                 MessageBox.ErrorQuery("Error !", ex.Message, "Ok");
+                                inputText.SetFocus();
                             }
-                            inputWin.RequestStop();
                         };
 
                         inputWin.Add(inputLabel, inputText, curr, submitButton);

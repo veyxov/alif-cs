@@ -8,17 +8,23 @@ static class SQL
 
     static public void DepositToAccount(string login, decimal amount)
     {
-        throw new NotImplementedException();
+        makeTransaction(login, amount, "D");
     }
-    static public void MakeTransaction(string login, decimal amount)
+
+    static public void CreditToAccount(string login, decimal amount)
+    {
+        makeTransaction(login, amount, "C");
+    }
+    static private void makeTransaction(string login, decimal amount, string type)
     {
         if (!ExistAccount(login)) throw new Exception("Account does not exist");
-        if (amount == 0) throw new Exception("Amount can not be zero");
+        if (amount <= 0) throw new Exception("Amount should be positive");
         if (IsAdmin(login)) throw new Exception("Admin cannot interact with money");
+        if (type != "C" && type != "D") throw new Exception("Invalid transaction type");
 
         try
         {
-            var insertQuery = "INSERT INTO Transactions ([Account_Id], [Amount], [Type]) VALUES(@accountID, @amount, 'D')";
+            var insertQuery = "INSERT INTO Transactions ([Account_Id], [Amount], [Type]) VALUES(@accountID, @amount, @type)";
             using (var cnn = new SqlConnection(cnnStr))
             {
                 using (var cmd = cnn.CreateCommand())
@@ -37,6 +43,7 @@ static class SQL
 
                     cmd.Parameters.AddWithValue("@AccountId", GetIdByLogin(login));
                     cmd.Parameters.AddWithValue("@amount", amount);
+                    cmd.Parameters.AddWithValue("@type", type);
 
                     /* Try to run the command */
                     int result = 0;
@@ -229,6 +236,60 @@ static class SQL
         }
         return resAccounts;
     }
+
+    static public decimal CalculateAccountBalance(string login)
+    {
+        var getSumQuery =
+            "select SUM([Amount]) FROM [dbo].[Transactions] WHERE [Account_Id] = @AccountID";
+
+        decimal balance = 0;
+        try
+        {
+            using (var cnn = new SqlConnection(cnnStr))
+            {
+                using (var cmd = cnn.CreateCommand())
+                {
+                    /* Open the connection */
+                    try
+                    {
+                        cnn.Open();
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception(ex.Message);
+                    }
+                    IO.Debug("Connection opened !");
+
+                    /* Create the command */
+                    cmd.CommandText = getSumQuery;
+                    /* Add parameters */
+                    cmd.Parameters.AddWithValue("@AccountID", SQL.GetIdByLogin(login));
+
+                    /* Try to run the command */
+
+                    SqlDataReader result = null;
+                    try
+                    {
+                        result = cmd.ExecuteReader();
+                        result.Read();
+
+                        balance = result.GetDecimal(0);
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception(ex.Message);
+                    }
+
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            throw new Exception(ex.Message);
+        }
+        return balance;
+    }
+
     static public bool CreateAccount(Account acc)
     {
         if (ExistAccount(acc.Login))
