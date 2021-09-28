@@ -14,7 +14,7 @@ namespace AlifBank
             Application.Init();
             var top = Application.Top;
 
-            top.Add(new Label("HE LOO USR !"));
+
 
             Application.Run();
         }

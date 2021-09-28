@@ -1,15 +1,21 @@
-﻿namespace MainApp
+﻿using System;
+
+namespace MainApp
 {
+    /* Constants to use in windows */
     static public class Constants
     {
-        static public int MIN_POINTS = 11;
-        static public string SorryMessage = "You cannot create a credit";
-        static public string Congrats = "You can create a credit !";
+        public const int MIN_POINTS = 11;
+        public const string SorryMessage = "You cannot create a credit";
+        public const string Congrats = "You can create a credit !";
     }
+    /* Mehthods that hold the logic of the program */
     static public class Program
     {
         static public int CalculatePoints(string login, int maritialStatus, bool isFromTj, int loanAmount, int credHistory, int purpose, int delHistory, int limit)
         {
+            if (!SQL.ExistAccount(login)) throw new Exception("Account does not exist");
+
             int result = 0;
 
             /* Basic information */
