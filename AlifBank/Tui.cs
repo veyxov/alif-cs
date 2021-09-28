@@ -62,7 +62,7 @@ namespace AlifBank
             }
             Application.Run();
         }
-        static void UserDataScreen()
+        static void AccountDataScreen()
         {
             Application.Init();
             var top = Application.Top;
@@ -75,7 +75,46 @@ namespace AlifBank
                 Height = Dim.Fill()
             };
 
+            var backButton = new Button("Back")
+            {
+                X = Pos.Percent(5f),
+                Y = Pos.Percent(95f)
+            };
+
+            backButton.Clicked += () =>
+            {
+                running = UserDataScreen;
+                Application.RequestStop();
+            };
+
+            try
+            {
+                tableView.Table = SQL.GetAccountDataAllTableSpecific(currentClientLogin);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.ErrorQuery("Error !", ex.Message, "Ok");
+            }
+
+            top.RemoveAll();
+            top.Add(tableView);
+            top.Add(backButton);
+
+            Application.Run();
+        }
+        static void UserDataScreen()
+        {
+            Application.Init();
+            var top = Application.Top;
+
+
             var getUserDataButton = new Button("Get account data")
+            {
+                X = Pos.Center(),
+                Y = 1
+            };
+
+            var getTransactsButton = new Button("Get transactions data")
             {
                 X = Pos.Center(),
                 Y = 1
@@ -107,18 +146,8 @@ namespace AlifBank
             };
             getUserDataButton.Clicked += () =>
             {
-                try
-                {
-                    tableView.Table = SQL.GetAccountDataAllTableSpecific(currentClientLogin);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.ErrorQuery("Error !", ex.Message, "Ok");
-                }
-
-                top.RemoveAll();
-                top.Add(tableView);
-                top.Add(backButton);
+                running = AccountDataScreen;
+                Application.RequestStop();
             };
             top.Add(getUserDataButton);
             top.Add(backToAdminButton);
@@ -375,7 +404,15 @@ namespace AlifBank
         }
         static void UserTransactsScreen()
         {
+            Application.Init();
+            var top = Application.Top;
 
+            var mainLabel = new Label($"{currentClientLogin}'s transactions: ")
+            {
+
+            };
+
+            Application.RequestStop();
         }
         static void AdminScreen()
         {
