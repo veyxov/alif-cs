@@ -328,7 +328,9 @@ namespace AlifBank
                         var inputWin = new Window("Input the amount")
                         {
                             X = Pos.Center(),
-                            Y = Pos.Center()
+                            Y = Pos.Center(),
+                            Width = Dim.Fill(),
+                            Height = Dim.Fill()
                         };
 
                         var inputLabel = new Label("Amount: ")
@@ -349,17 +351,29 @@ namespace AlifBank
                             Y = Pos.Center()
                         };
 
+                        var limitLabel = new Label("Limit in months: ")
+                        {
+                            X = Pos.Center(),
+                            Y = Pos.Bottom(inputText)
+                        };
+                        var limitText = new TextField()
+                        {
+                            X = Pos.Right(limitLabel),
+                            Y = Pos.Bottom(inputText),
+                            Width = 10
+                        };
+
                         var submitButton = new Button("Submit")
                         {
                             X = Pos.Center(),
-                            Y = Pos.Bottom(curr),
+                            Y = Pos.Bottom(limitText),
                         };
 
                         submitButton.Clicked += () =>
                         {
                             try
                             {
-                                SQL.CreditToAccount(currentClientLogin, decimal.Parse(inputText.Text.ToString()));
+                                SQL.CreditToAccount(currentClientLogin, decimal.Parse(inputText.Text.ToString()), int.Parse(limitText.Text.ToString()));
                                 inputWin.RequestStop();
                             }
                             catch (Exception ex)
@@ -369,8 +383,7 @@ namespace AlifBank
                             }
                         };
 
-                        inputWin.Add(inputLabel, inputText, curr, submitButton);
-                        //inputWin.Add();
+                        inputWin.Add(inputLabel, inputText, curr, limitLabel, limitText, submitButton);
 
                         top.Add(inputWin);
                     }

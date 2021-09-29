@@ -6,16 +6,16 @@ static class SQL
 {
     static private string cnnStr = "Data Source=localhost;Initial Catalog=AlifBank;User ID=sa;Password=qwerty112!";
 
-    static public void DepositToAccount(string login, decimal amount)
+    static public void DepositToAccount(string login, decimal amount, int limit)
     {
-        makeTransaction(login, amount, "D");
+        makeTransaction(login, amount, "D", limit);
     }
 
-    static public void CreditToAccount(string login, decimal amount)
+    static public void CreditToAccount(string login, decimal amount, int limit)
     {
-        makeTransaction(login, amount, "C");
+        makeTransaction(login, amount, "C", limit);
     }
-    static private void makeTransaction(string login, decimal amount, string type)
+    static private void makeTransaction(string login, decimal amount, string type, int limit)
     {
         if (!ExistAccount(login)) throw new Exception($"Account {login} does not exist");
         if (amount <= 0) throw new Exception("Amount should be positive");
@@ -24,7 +24,7 @@ static class SQL
 
         try
         {
-            var insertQuery = "INSERT INTO Transactions ([Account_Id], [Amount], [Type], [Created_At]) VALUES(@accountID, @amount, @type, @createdAt)";
+            var insertQuery = "INSERT INTO Transactions ([Account_Id], [Amount], [Type], [Limit], [Created_At]) VALUES(@accountID, @amount, @type, @limit, @createdAt)";
             using (var cnn = new SqlConnection(cnnStr))
             {
                 using (var cmd = cnn.CreateCommand())
@@ -45,6 +45,7 @@ static class SQL
                     if (type == "C") amount *= -1;
                     cmd.Parameters.AddWithValue("@amount", amount);
                     cmd.Parameters.AddWithValue("@type", type);
+                    cmd.Parameters.AddWithValue("@limit", limit);
                     cmd.Parameters.AddWithValue("@createdAt", DateTime.Now);
 
                     /* Try to run the command */

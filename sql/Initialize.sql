@@ -18,5 +18,6 @@ create TABLE Transactions(
     Account_Id INT REFERENCES Accounts(Id) NOT NULL,
     Amount DECIMAL(20, 2) NOT NULL,
     Type NVARCHAR(200) NOT NULL,
+    Limit INT NOT NULL,
     Created_At DATETIME NOT NULL,
 )
