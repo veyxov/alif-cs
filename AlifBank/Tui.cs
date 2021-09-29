@@ -16,50 +16,31 @@ namespace AlifBank
         static void GetCurrentClientScreen()
         {
             Start(out var top);
-            var loginLabel = new Label("Login of the client: ")
-            {
-                X = Pos.Center(),
-                Y = 1
-            };
 
-            var loginText = new TextField()
-            {
-                X = Pos.Center(),
-                Y = Pos.Bottom(loginLabel),
-                Width = Dim.Percent(30f)
-            };
+            var loginLabel = new Label("Login of the client: ") { X = Pos.Center(), Y = Pos.Center() };
+            var loginText = new TextField() { X = Pos.Center(), Y = Pos.Bottom(loginLabel), Width = Dim.Percent(30f) };
 
-            var doneButton = new Button("Done")
-            {
-                X = Pos.Center(),
-                Y = Pos.Bottom(loginText) + 3,
-            };
-            try
-            {
-                doneButton.Clicked += () =>
-                {
+            var doneButton = new Button("Done") { X = Pos.Center(), Y = Pos.Bottom(loginText), };
+
+            try {
+                doneButton.Clicked += () => {
                     var tmpLogin = loginText.Text.ToString();
-                    try
-                    {
+                    try {
                         if (!SQL.ExistAccount(tmpLogin)) throw new Exception($"Account {tmpLogin} not found");
 
                         currentClientLogin = tmpLogin;
                         Switch(AdminScreen);
-                    }
-                    catch (Exception ex)
-                    {
+                    } catch (Exception ex) {
                         MessageBox.ErrorQuery("Error !", ex.Message, "Ok");
                     }
-
                 };
-
                 top.Add(loginLabel, loginText);
                 top.Add(doneButton);
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex) {
                 MessageBox.ErrorQuery("Error !", ex.Message, "Ok");
             }
+            top.Add(BackButton(LoginScreen, "to login screen"));
             End();
         }
         static void AccountDataScreen()
