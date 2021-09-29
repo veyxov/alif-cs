@@ -24,7 +24,7 @@ static class SQL
 
         try
         {
-            var insertQuery = "INSERT INTO Transactions ([Account_Id], [Amount], [Type]) VALUES(@accountID, @amount, @type)";
+            var insertQuery = "INSERT INTO Transactions ([Account_Id], [Amount], [Type], [Created_At]) VALUES(@accountID, @amount, @type, @createdAt)";
             using (var cnn = new SqlConnection(cnnStr))
             {
                 using (var cmd = cnn.CreateCommand())
@@ -45,6 +45,7 @@ static class SQL
                     if (type == "C") amount *= -1;
                     cmd.Parameters.AddWithValue("@amount", amount);
                     cmd.Parameters.AddWithValue("@type", type);
+                    cmd.Parameters.AddWithValue("@createdAt", DateTime.Now);
 
                     /* Try to run the command */
                     int result = 0;
@@ -132,6 +133,39 @@ static class SQL
         {
             throw new Exception(ex.Message);
         }
+    }
+
+    static public DataTable GetAccountTransactions(string login)
+    {
+        var getDataQuery = 
+            "select * from [dbo].[Transactions] WHERE Login = @login";
+        var resTable = new DataTable();
+
+        using (var cnn = new SqlConnection(cnnStr))
+        {
+            using (var cmd = cnn.CreateCommand())
+            {
+                try
+                {
+                    cnn.Open();
+                }
+                catch (Exception ex)
+                {
+                    IO.Print(ex.Message, ConsoleColor.Red);
+                    IO.Print("Cannot open connection !", ConsoleColor.Red);
+                }
+                IO.Debug("Connection opened !");
+
+                /* Create the command */
+                cmd.CommandText = getDataQuery;
+                cmd.Parameters.AddWithValue("@login", login);
+
+                var adapter = new SqlDataAdapter(cmd);
+                adapter.Fill(resTable);
+                cmd.Parameters.Clear();
+            }
+        }
+        return resTable;
     }
 
     static public DataTable GetAccountDataAllTableSpecific(string login)
