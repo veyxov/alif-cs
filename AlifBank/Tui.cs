@@ -15,7 +15,7 @@ namespace AlifBank
 
         static void GetCurrentClientScreen()
         {
-            InitApp(out var top);
+            Start(out var top);
             var loginLabel = new Label("Login of the client: ")
             {
                 X = Pos.Center(),
@@ -60,11 +60,11 @@ namespace AlifBank
             {
                 MessageBox.ErrorQuery("Error !", ex.Message, "Ok");
             }
-            Application.Run();
+            End();
         }
         static void AccountDataScreen()
         {
-            InitApp(out var top);
+            Start(out var top);
 
             var tableView = new TableView()
             {
@@ -98,11 +98,11 @@ namespace AlifBank
             top.Add(tableView);
             top.Add(backButton);
 
-            Application.Run();
+            End();
         }
         static void UserDataScreen()
         {
-            InitApp(out var top);
+            Start(out var top);
 
 
             var getUserDataButton = new Button("Get account data")
@@ -152,20 +152,20 @@ namespace AlifBank
             top.Add(getUserDataButton);
             top.Add(backToAdminButton);
             top.Add(userTransactsDataButton);
-            Application.Run();
+            End();
         }
 
         static void UserScreen()
         {
-            InitApp(out var top);
+            Start(out var top);
 
             throw new NotImplementedException();
 
-            Application.Run();
+            End();
         }
         static void CreateCreditScreen()
         {
-            InitApp(out var top);
+            Start(out var top);
 
             var marStatusLabel = new Label("Maritial status")
             {
@@ -411,11 +411,11 @@ namespace AlifBank
             top.Add(limitLabel, limitRadio);
             top.Add(submitButton);
             top.Add(backButton);
-            Application.Run();
+            End();
         }
         static void UserTransactsScreen()
         {
-            InitApp(out var top);
+            Start(out var top);
 
             var mainLabel = new Label($"{currentClientLogin}'s transactions: ")
             {
@@ -426,7 +426,7 @@ namespace AlifBank
         }
         static void AdminScreen()
         {
-            InitApp(out var top);
+            Start(out var top);
 
             var welcomeLabel = new Label("Welcome to the admin screen !")
             {
@@ -503,12 +503,12 @@ namespace AlifBank
             top.Add(userTransactsButton);
             top.Add(graphButton);
             top.Add(backButton);
-            Application.Run();
+            End();
         }
 
         static void RepaymentGraphScreen()
         {
-            InitApp(out var top);
+            Start(out var top);
 
             var tableView = new TableView()
             {
@@ -534,11 +534,11 @@ namespace AlifBank
             }
 
             tableView.Table = dt;
-            Application.Run();
+            End();
         }
         static void UserTransactsDataScreen()
         {
-            InitApp(out var top);
+            Start(out var top);
 
             var tableView = new TableView()
             {
@@ -573,12 +573,12 @@ namespace AlifBank
             top.Add(backButton);
 
 
-            Application.Run();
+            End();
         }
 
         static void RegisterScreen()
         {
-            InitApp(out var top);
+            Start(out var top);
 
             /* Registration lable */
             var regLabel = new Label("Register")
@@ -723,11 +723,11 @@ namespace AlifBank
             top.Add(submitButton);
             top.Add(backButton);
 
-            Application.Run();
+            End();
         }
         static void LoginScreen()
         {
-            InitApp(out var top);
+            Start(out var top);
 
             var login = new Label("Login: ")
             {
@@ -802,15 +802,16 @@ namespace AlifBank
             };
             top.Add(login, password, loginText, passText, doneButton, backButton);
 
-            Application.Run();
+            End();
         }
-        static void InitApp(out Terminal.Gui.Toplevel app) { Application.Init(); app = Application.Top; }
+        static void Start(out Terminal.Gui.Toplevel app) { Application.Init(); app = Application.Top; }
         static void Switch(System.Action to) { running = to; Application.RequestStop(); }
+        static void End() { Application.Run(); }
 
         /* Screen for selecting to login or register */
         static void MainScreen()
         {
-            InitApp(out var top);
+            Start(out var top);
 
             var helloLabe = new Label("Hello and welcome !") { X = Pos.Center(), Y = Pos.Percent(20f) };
 
@@ -829,7 +830,7 @@ namespace AlifBank
                 registerButton,
                 exitButton);
 
-            Application.Run();
+            End();
         }
 
         public static Action running = MainScreen;
