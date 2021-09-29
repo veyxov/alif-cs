@@ -815,7 +815,8 @@ namespace AlifBank
             exitButton.Clicked += () =>
             {
                 // TODO: Fix application closure
-                Application.Shutdown();
+                Application.RequestStop();
+                running = null;
             };
             top.Add(loginButton, registerButton, helloLabe);
             top.Add(exitButton);

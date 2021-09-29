@@ -305,17 +305,13 @@ static class SQL
                     var reader = cmd.ExecuteReader();
                     if(reader.HasRows)
                     {
-                        if (reader.HasRows) {
-                            while (reader.Read())
-                            {
-                                if (reader["Balance"] == DBNull.Value) {
-                                    // TODO: what to do when null
-                                } else {
-                                    balance = decimal.Parse(reader["Balance"].ToString());
-                                }
+                        while (reader.Read())
+                        {
+                            if (reader["Balance"] == DBNull.Value) {
+                                // TODO: what to do when null
+                            } else {
+                                balance = decimal.Parse(reader["Balance"].ToString());
                             }
-                        } else {
-                            // TODO: Here the account is newly created and doesnt have a history
                         }
                     } else {
                         throw new Exception("Sum returned NULL");
