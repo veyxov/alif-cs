@@ -529,105 +529,38 @@ namespace AlifBank
         {
             Start(out var top);
 
-            /* Registration lable */
-            var regLabel = new Label("Register")
-            {
-                X = Pos.Center(),
-                Y = 1
-            };
+            var regLabel = new Label("Register") { X = Pos.Center(), Y = Pos.Percent(1f) };
 
-            var fnameLabel = new Label("First name: ")
-            {
-                X = Pos.Center() - 20,
-                Y = Pos.Bottom(regLabel)
-            };
+            var fnameLabel = new Label("First name: ") { X = Pos.Center() - 20, Y = Pos.Percent(20f) };
+            var fnameText = new TextField() { X = Pos.Right(fnameLabel), Y = Pos.Percent(20f), Width = 15 };
 
-            var fnameText = new TextField()
-            {
-                X = Pos.Right(fnameLabel),
-                Y = Pos.Bottom(regLabel),
-                Width = 15
-            };
+            var lnameLabel = new Label("Last name: ") { X = Pos.Left(fnameLabel), Y = Pos.Bottom(fnameText) };
+            var lnameText = new TextField() { X = Pos.Right(lnameLabel) + 1, Y = Pos.Bottom(fnameText), Width = 15 };
 
-            var lnameLabel = new Label("Last name: ")
-            {
-                X = Pos.Left(fnameLabel),
-                Y = Pos.Bottom(fnameText)
-            };
+            var ageLabel = new Label("Age: ") { X = Pos.Left(fnameLabel), Y = Pos.Bottom(lnameText) + 1 };
+            var ageText = new TextField() { X = Pos.Left(lnameText), Y = Pos.Bottom(lnameText) + 1, Width = 3 };
 
-            var lnameText = new TextField()
-            {
-                X = Pos.Right(lnameLabel) + 1,
-                Y = Pos.Bottom(fnameText),
-                Width = 15
-            };
-
-            var ageLabel = new Label("Age: ")
-            {
-                X = Pos.Left(fnameLabel),
-                Y = Pos.Bottom(lnameText)
-            };
-
-            var ageText = new TextField()
-            {
-                X = Pos.Left(lnameText),
-                Y = Pos.Bottom(lnameText),
-                Width = 3
-            };
-
-            var loginLab = new Label("Login:")
-            {
-                X = Pos.Left(ageLabel),
-                Y = Pos.Bottom(regLabel) + 3
-            };
-
-            var loginText = new TextField("+992")
-            {
+            var loginLab = new Label("Login:") { X = Pos.Left(ageLabel), Y = Pos.Bottom(ageText) };
+            var loginText = new TextField("+992") {
                 X = Pos.Left(ageText),
                 Y = Pos.Bottom(ageText),
                 /* Phone len in TJ is 9 and +992 prefix and margin */
                 Width = 9 + 4 + 1
             };
 
-            var passLab = new Label("Password:")
-            {
-                X = Pos.Left(loginLab),
-                Y = Pos.Bottom(loginLab)
-            };
+            var passLab = new Label("Password:") { X = Pos.Left(loginLab), Y = Pos.Bottom(loginLab) };
+            var passText = new TextField() { Secret = true, X = Pos.Left(loginText), Y = Pos.Bottom(loginText), Width = 15 };
 
-            var passText = new TextField()
-            {
-                X = Pos.Left(loginText),
-                Y = Pos.Bottom(loginText),
-                Width = 12
-            };
+            var genderLable = new Label("Gender") { X = Pos.Center(), Y = Pos.Bottom(passText) + 2 };
+            var genderRadio = new RadioGroup(new ustring[] { "Male", "Female" }) { X = Pos.Center(), Y = Pos.Bottom(genderLable) };
 
-            var genderLable = new Label("Gender")
-            {
-                X = Pos.Center(),
-                Y = Pos.Bottom(loginText) + 1
-            };
+            var isAdminCheckBox = new CheckBox("I am an admin") { X = Pos.Center(), Y = Pos.Bottom(genderRadio) + 1 };
 
-            var genderRadio = new RadioGroup(new ustring[] { "Male", "Female" })
-            {
-                X = Pos.Center(),
-                Y = Pos.Bottom(genderLable)
-            };
-
-            var isAdminCheckBox = new CheckBox("I am an admin")
-            {
-                X = Pos.Center(),
-                Y = Pos.Bottom(genderRadio)
-            };
-
-            var submitButton = new Button("Submit")
-            {
-                X = Pos.Center(),
-                Y = Pos.AnchorEnd(1)
-            };
+            var submitButton = new Button("Submit") { X = Pos.Center(), Y = Pos.AnchorEnd(1) };
 
             submitButton.Clicked += () =>
             {
+                // TODO: Validate data
                 var newAccount = new Account()
                 {
                     FistName = fnameText.Text.ToString(),
@@ -638,16 +571,15 @@ namespace AlifBank
                     Gender = genderRadio.SelectedItem,
                     IsAdmin = isAdminCheckBox.Checked
                 };
+
                 bool result = false;
-                try
-                {
+                try {
                     result = SQL.CreateAccount(newAccount);
-                }
-                catch (Exception ex)
-                {
+                    if (result) MessageBox.Query("Success !", $"Created account {newAccount.Login}", "Ok");
+                    Switch(MainScreen);
+                } catch (Exception ex) {
                     MessageBox.ErrorQuery("Error !", ex.Message, "Ok");
                 }
-                if (result) MessageBox.Query("Ok !", "Created Account", "Ok");
             };
 
             top.Add(regLabel);
