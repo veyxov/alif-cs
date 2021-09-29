@@ -114,10 +114,16 @@ namespace AlifBank
                 Y = 1
             };
 
-            var getTransactsButton = new Button("Get transactions data")
+            var userTransactsDataButton = new Button("Get transactions data")
             {
                 X = Pos.Center(),
-                Y = 1
+                Y = Pos.Bottom(getUserDataButton) + 1
+            };
+
+            userTransactsDataButton.Clicked += () =>
+            {
+                running = UserTransactsDataScreen;
+                Application.RequestStop();
             };
 
             var backButton = new Button("Back")
@@ -151,6 +157,7 @@ namespace AlifBank
             };
             top.Add(getUserDataButton);
             top.Add(backToAdminButton);
+            top.Add(userTransactsDataButton);
             Application.Run();
         }
 
@@ -374,7 +381,7 @@ namespace AlifBank
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.ErrorQuery("Error !", ex.Message, "Ok");
+                    MessageBox.ErrorQuery("Error !", ex.Message + " " + ex, "Ok");
                 }
             };
 
@@ -467,6 +474,7 @@ namespace AlifBank
                 Application.RequestStop();
             };
 
+
             var backButton = new Button("Back")
             {
                 X = Pos.Percent(5f),
@@ -487,6 +495,49 @@ namespace AlifBank
             top.Add(backButton);
             Application.Run();
         }
+
+        static void UserTransactsDataScreen()
+        {
+            Application.Init();
+            var top = Application.Top;
+
+            var tableView = new TableView()
+            {
+                X = 1,
+                Y = 1,
+                Width = Dim.Fill(),
+                Height = Dim.Fill()
+            };
+
+            var backButton = new Button("Back")
+            {
+                X = Pos.Percent(5f),
+                Y = Pos.Percent(95f)
+            };
+
+            backButton.Clicked += () =>
+            {
+                running = UserDataScreen;
+                Application.RequestStop();
+            };
+
+            try
+            {
+                tableView.Table = SQL.GetAccountTransactions(currentClientLogin);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.ErrorQuery("Error !", ex.Message, "Ok");
+            }
+
+            top.RemoveAll();
+            top.Add(tableView);
+            top.Add(backButton);
+
+
+            Application.Run();
+        }
+
         static void RegisterScreen()
         {
             Application.Init();

@@ -138,7 +138,7 @@ static class SQL
     static public DataTable GetAccountTransactions(string login)
     {
         var getDataQuery = 
-            "select * from [dbo].[Transactions] WHERE Login = @login";
+            "select * from [dbo].[Transactions] WHERE Account_Id  = @AccountID";
         var resTable = new DataTable();
 
         using (var cnn = new SqlConnection(cnnStr))
@@ -158,7 +158,7 @@ static class SQL
 
                 /* Create the command */
                 cmd.CommandText = getDataQuery;
-                cmd.Parameters.AddWithValue("@login", login);
+                cmd.Parameters.AddWithValue("@AccountID", SQL.GetIdByLogin(login));
 
                 var adapter = new SqlDataAdapter(cmd);
                 adapter.Fill(resTable);
@@ -305,9 +305,17 @@ static class SQL
                     var reader = cmd.ExecuteReader();
                     if(reader.HasRows)
                     {
-                        while (reader.Read())
-                        {
-                            balance = decimal.Parse(reader["Balance"].ToString());
+                        if (reader.HasRows) {
+                            while (reader.Read())
+                            {
+                                if (reader["Balance"] == DBNull.Value) {
+                                    // TODO: what to do when null
+                                } else {
+                                    balance = decimal.Parse(reader["Balance"].ToString());
+                                }
+                            }
+                        } else {
+                            // TODO: Here the account is newly created and doesnt have a history
                         }
                     } else {
                         throw new Exception("Sum returned NULL");
@@ -318,7 +326,7 @@ static class SQL
         }
         catch (Exception ex)
         {
-            throw new Exception(ex.Message);
+            throw new Exception(ex.ToString());
         }
         return balance;
     }
