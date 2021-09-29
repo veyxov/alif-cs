@@ -499,6 +499,65 @@ static class SQL
         }
         return false;
     }
+
+    public static Transaction GetAccountTransactionData(string login)
+    {
+        var getDataQuery =
+            "select * from [dbo].[Transactions] WHERE Account_Id = @accountID";
+
+        try
+        {
+            using (var cnn = new SqlConnection(cnnStr))
+            {
+                using (var cmd = cnn.CreateCommand())
+                {
+                    /* Open the connection */
+                    try
+                    {
+                        cnn.Open();
+                    }
+                    catch (Exception ex)
+                    {
+                        IO.Print(ex.Message, ConsoleColor.Red);
+                        IO.Print("Cannot open connection !", ConsoleColor.Red);
+                    }
+                    IO.Debug("Connection opened !");
+
+                    /* Create the command */
+                    cmd.CommandText = getDataQuery;
+
+                    cmd.Parameters.AddWithValue("@AccountID", SQL.GetIdByLogin(login));
+
+                    /* Try to run the command */
+                    SqlDataReader result = null;
+                    try
+                    {
+                        result = cmd.ExecuteReader();
+                        if (!result.HasRows) throw new Exception("No data !");
+                    }
+                    catch
+                    {
+
+                    }
+                    result.Read();
+                    // Create new Account instance using the data
+                    return new Transaction()
+                    {
+                        Id = result.GetInt32(0),
+                        AccountId = result.GetInt32(1),
+                        Amount = result.GetDecimal(2),
+                        Type = result.GetString(3),
+                        Limit = result.GetInt32(4),
+                        Created_At = result.GetDateTime(5)
+                    };
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            throw new Exception(ex.ToString());
+        }
+    }
 }
 
 public class Account
@@ -519,4 +578,6 @@ public class Transaction
     public int AccountId { get; set; }
     public decimal Amount { get; set; }
     public string Type { get; set; }
+    public int Limit { get; set; }
+    public DateTime Created_At { get; set; }
 }

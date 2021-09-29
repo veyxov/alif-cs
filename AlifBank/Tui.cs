@@ -3,6 +3,8 @@ using System;
 using Terminal.Gui;
 using NStack;
 using MainApp;
+using System.Data;
+
 namespace AlifBank
 {
     class tui
@@ -487,6 +489,17 @@ namespace AlifBank
                 Application.RequestStop();
             };
 
+            var graphButton = new Button("Show repayment graph")
+            {
+                X = Pos.Center(),
+                Y = Pos.Bottom(userTransactsButton) + 3
+            };
+
+            graphButton.Clicked += () =>
+            {
+                running = RepaymentGraphScreen;
+                Application.RequestStop();
+            };
 
             var backButton = new Button("Back")
             {
@@ -505,10 +518,43 @@ namespace AlifBank
             top.Add(welcomeLabel, newCreditButton);
             top.Add(userLabel);
             top.Add(userDataButton);
+            top.Add(userTransactsButton);
+            top.Add(graphButton);
             top.Add(backButton);
             Application.Run();
         }
 
+        static void RepaymentGraphScreen()
+        {
+            Application.Init();
+            var top = Application.Top;
+
+            var tableView = new TableView()
+            {
+                X = 0,
+                Y = 0,
+                Width = Dim.Fill(),
+                Height = Dim.Fill()
+            };
+            top.Add(tableView);
+            var dt = new DataTable ();
+			dt.Columns.Add ("Num");
+			dt.Columns.Add ("Amount");
+			dt.Columns.Add ("Expiration date");
+
+            int limit = SQL.GetAccountTransactionData(currentClientLogin).Limit;
+            var tmpBal = SQL.CalculateAccountBalance(currentClientLogin);
+            decimal mean = Math.Round((-1 * tmpBal) / limit, 2);
+
+            MessageBox.Query("Test", $"limit: {limit}\nBalance:{tmpBal}\nmean: {mean}", "Ok");
+
+            for (int i = 0; i < limit; ++i) {
+                dt.Rows.Add (i.ToString(), mean.ToString(), SQL.GetAccountTransactionData(currentClientLogin).Created_At.AddDays(i));
+            }
+
+            tableView.Table = dt;
+            Application.Run();
+        }
         static void UserTransactsDataScreen()
         {
             Application.Init();
