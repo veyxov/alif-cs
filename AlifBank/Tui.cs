@@ -15,8 +15,7 @@ namespace AlifBank
 
         static void GetCurrentClientScreen()
         {
-            Application.Init();
-            var top = Application.Top;
+            InitApp(out var top);
             var loginLabel = new Label("Login of the client: ")
             {
                 X = Pos.Center(),
@@ -45,8 +44,7 @@ namespace AlifBank
                         if (!SQL.ExistAccount(tmpLogin)) throw new Exception($"Account {tmpLogin} not found");
 
                         currentClientLogin = tmpLogin;
-                        running = AdminScreen;
-                        Application.RequestStop();
+                        Switch(AdminScreen);
                     }
                     catch (Exception ex)
                     {
@@ -66,8 +64,7 @@ namespace AlifBank
         }
         static void AccountDataScreen()
         {
-            Application.Init();
-            var top = Application.Top;
+            InitApp(out var top);
 
             var tableView = new TableView()
             {
@@ -85,8 +82,7 @@ namespace AlifBank
 
             backButton.Clicked += () =>
             {
-                running = UserDataScreen;
-                Application.RequestStop();
+                Switch(UserDataScreen);
             };
 
             try
@@ -106,8 +102,7 @@ namespace AlifBank
         }
         static void UserDataScreen()
         {
-            Application.Init();
-            var top = Application.Top;
+            InitApp(out var top);
 
 
             var getUserDataButton = new Button("Get account data")
@@ -124,8 +119,7 @@ namespace AlifBank
 
             userTransactsDataButton.Clicked += () =>
             {
-                running = UserTransactsDataScreen;
-                Application.RequestStop();
+                Switch(UserTransactsDataScreen);
             };
 
             var backButton = new Button("Back")
@@ -142,8 +136,7 @@ namespace AlifBank
 
             backToAdminButton.Clicked += () =>
             {
-                running = AdminScreen;
-                Application.RequestStop();
+                Switch(AdminScreen);
             };
 
             backButton.Clicked += () =>
@@ -154,8 +147,7 @@ namespace AlifBank
             };
             getUserDataButton.Clicked += () =>
             {
-                running = AccountDataScreen;
-                Application.RequestStop();
+                Switch(AccountDataScreen);
             };
             top.Add(getUserDataButton);
             top.Add(backToAdminButton);
@@ -165,8 +157,7 @@ namespace AlifBank
 
         static void UserScreen()
         {
-            Application.Init();
-            var top = Application.Top;
+            InitApp(out var top);
 
             throw new NotImplementedException();
 
@@ -174,8 +165,7 @@ namespace AlifBank
         }
         static void CreateCreditScreen()
         {
-            Application.Init();
-            var top = Application.Top;
+            InitApp(out var top);
 
             var marStatusLabel = new Label("Maritial status")
             {
@@ -408,8 +398,7 @@ namespace AlifBank
 
             backButton.Clicked += () =>
             {
-                running = AdminScreen;
-                Application.RequestStop();
+                Switch(AdminScreen);
             };
 
 
@@ -426,8 +415,7 @@ namespace AlifBank
         }
         static void UserTransactsScreen()
         {
-            Application.Init();
-            var top = Application.Top;
+            InitApp(out var top);
 
             var mainLabel = new Label($"{currentClientLogin}'s transactions: ")
             {
@@ -438,8 +426,7 @@ namespace AlifBank
         }
         static void AdminScreen()
         {
-            Application.Init();
-            var top = Application.Top;
+            InitApp(out var top);
 
             var welcomeLabel = new Label("Welcome to the admin screen !")
             {
@@ -461,8 +448,7 @@ namespace AlifBank
 
             newCreditButton.Clicked += () =>
             {
-                running = CreateCreditScreen;
-                Application.RequestStop();
+                Switch(CreateCreditScreen);
             };
 
             var userDataButton = new Button("Get user data")
@@ -473,8 +459,7 @@ namespace AlifBank
 
             userDataButton.Clicked += () =>
             {
-                running = UserDataScreen;
-                Application.RequestStop();
+                Switch(UserDataScreen);
             };
 
             var userTransactsButton = new Button("Create new credit for user")
@@ -485,8 +470,7 @@ namespace AlifBank
 
             userTransactsButton.Clicked += () =>
             {
-                running = UserTransactsScreen;
-                Application.RequestStop();
+                Switch(UserTransactsScreen);
             };
 
             var graphButton = new Button("Show repayment graph")
@@ -497,8 +481,7 @@ namespace AlifBank
 
             graphButton.Clicked += () =>
             {
-                running = RepaymentGraphScreen;
-                Application.RequestStop();
+                Switch(RepaymentGraphScreen);
             };
 
             var backButton = new Button("Back")
@@ -511,8 +494,7 @@ namespace AlifBank
             {
                 // TODO Create proper logout
                 currentLogin = null;
-                running = LoginScreen;
-                Application.RequestStop();
+                Switch(LoginScreen);
             };
 
             top.Add(welcomeLabel, newCreditButton);
@@ -526,8 +508,7 @@ namespace AlifBank
 
         static void RepaymentGraphScreen()
         {
-            Application.Init();
-            var top = Application.Top;
+            InitApp(out var top);
 
             var tableView = new TableView()
             {
@@ -557,8 +538,7 @@ namespace AlifBank
         }
         static void UserTransactsDataScreen()
         {
-            Application.Init();
-            var top = Application.Top;
+            InitApp(out var top);
 
             var tableView = new TableView()
             {
@@ -576,8 +556,7 @@ namespace AlifBank
 
             backButton.Clicked += () =>
             {
-                running = UserDataScreen;
-                Application.RequestStop();
+                Switch(UserDataScreen);
             };
 
             try
@@ -599,8 +578,7 @@ namespace AlifBank
 
         static void RegisterScreen()
         {
-            Application.Init();
-            var top = Application.Top;
+            InitApp(out var top);
 
             /* Registration lable */
             var regLabel = new Label("Register")
@@ -731,8 +709,7 @@ namespace AlifBank
 
             backButton.Clicked += () =>
             {
-                running = MainScreen;
-                Application.RequestStop();
+                Switch(MainScreen);
             };
 
             top.Add(regLabel);
@@ -750,8 +727,7 @@ namespace AlifBank
         }
         static void LoginScreen()
         {
-            Application.Init();
-            var top = Application.Top;
+            InitApp(out var top);
 
             var login = new Label("Login: ")
             {
@@ -790,8 +766,7 @@ namespace AlifBank
 
             backButton.Clicked += () =>
             {
-                running = MainScreen;
-                Application.RequestStop();
+                Switch(MainScreen);
             };
 
             doneButton.Clicked += () =>
@@ -816,69 +791,44 @@ namespace AlifBank
                     if (SQL.IsAdmin(currentLogin))
                     {
                         currentLoginPriv = AdminScreen;
-                        running = GetCurrentClientScreen;
+                        Switch(GetCurrentClientScreen);
                     }
                     else
                     {
                         currentLoginPriv = UserScreen;
-                        running = UserScreen;
+                        Switch(UserScreen);
                     }
-                    Application.RequestStop();
                 }
             };
             top.Add(login, password, loginText, passText, doneButton, backButton);
 
             Application.Run();
         }
+        static void InitApp(out Terminal.Gui.Toplevel app) { Application.Init(); app = Application.Top; }
+        static void Switch(System.Action to) { running = to; Application.RequestStop(); }
+
+        /* Screen for selecting to login or register */
         static void MainScreen()
         {
-            Application.Init();
-            var top = Application.Top;
+            InitApp(out var top);
 
-            var helloLabe = new Label("Hello and welcome !")
-            {
-                X = Pos.Center(),
-                Y = Pos.Percent(50f)
-            };
+            var helloLabe = new Label("Hello and welcome !") { X = Pos.Center(), Y = Pos.Percent(20f) };
 
-            var loginButton = new Button("Login")
-            {
-                X = Pos.Center(),
-                Y = Pos.Bottom(helloLabe),
-            };
+            var loginButton = new Button("Login") { X = Pos.Center() - 10, Y = Pos.Center() };
+            loginButton.Clicked += () => { Switch(LoginScreen); };
 
-            loginButton.Clicked += () =>
-            {
-                running = LoginScreen;
-                Application.RequestStop();
-            };
+            var registerButton = new Button("Register") { X = Pos.Right(loginButton) + 5, Y = Pos.Center() };
+            registerButton.Clicked += () => { Switch(RegisterScreen); };
 
-            var registerButton = new Button("Register")
-            {
-                X = Pos.Right(loginButton),
-                Y = Pos.Bottom(helloLabe)
-            };
+            var exitButton = new Button("Exit") { X = Pos.Percent(5f), Y = Pos.Percent(95f) };
+            exitButton.Clicked += () => { Switch(null); };
 
-            registerButton.Clicked += () =>
-            {
-                running = RegisterScreen;
-                Application.RequestStop();
-            };
+            top.Add(
+                helloLabe,
+                loginButton,
+                registerButton,
+                exitButton);
 
-            var exitButton = new Button("Exit")
-            {
-                X = Pos.Percent(5f),
-                Y = Pos.Percent(95f)
-            };
-
-            exitButton.Clicked += () =>
-            {
-                // TODO: Fix application closure
-                Application.RequestStop();
-                running = null;
-            };
-            top.Add(loginButton, registerButton, helloLabe);
-            top.Add(exitButton);
             Application.Run();
         }
 
