@@ -495,9 +495,7 @@ namespace AlifBank
                 Width = Dim.Fill(),
                 Height = Dim.Fill()
             };
-
             top.Add(tableView);
-            top.Add(BackButton(AdminScreen, "to admin screen"));
             var dt = new DataTable ();
 			dt.Columns.Add ("Num");
 			dt.Columns.Add ("Amount");
@@ -510,7 +508,7 @@ namespace AlifBank
             MessageBox.Query("Test", $"limit: {limit}\nBalance:{tmpBal}\nmean: {mean}", "Ok");
 
             for (int i = 0; i < limit; ++i) {
-                dt.Rows.Add ((i + 1).ToString(), mean.ToString(), SQL.GetAccountTransactionData(currentClientLogin).Created_At.AddDays(i));
+                dt.Rows.Add (i.ToString(), mean.ToString(), SQL.GetAccountTransactionData(currentClientLogin).Created_At.AddDays(i));
             }
 
             tableView.Table = dt;
@@ -685,7 +683,7 @@ namespace AlifBank
         static Button BackButton(System.Action goesWhere, string whereName = "")
         {
             var backButton = new Button($"Back {whereName}") { X = Pos.Percent(5f), Y = Pos.Percent(95f) };
-            backButton.Clicked += () => { Switch(goesWhere); }; return backButton;
+            backButton.Clicked += () => { Switch(MainScreen); }; return backButton;
         }
 
         static void LoginScreen()
