@@ -47,26 +47,22 @@ namespace AlifBank
         {
             Start(out var top);
 
-            var tableView = new TableView()
-            {
-                X = 1,
-                Y = 1,
+            var tableView = new TableView() {
+                X = 1, Y = 1,
                 Width = Dim.Fill(),
                 Height = Dim.Fill()
             };
 
-            try
-            {
+            try {
                 tableView.Table = SQL.GetAccountDataAllTableSpecific(currentClientLogin);
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex) {
                 MessageBox.ErrorQuery("Error !", ex.Message, "Ok");
             }
 
             top.RemoveAll();
-            top.Add(tableView);
-            top.Add(BackButton(UserDataScreen, "to user data"));
+            top.Add(tableView,
+                BackButton(UserDataScreen, "to user data"));
 
             End();
         }
@@ -283,7 +279,7 @@ namespace AlifBank
             var welcomeLabel = new Label("Welcome to the admin screen !") { X = Pos.Center(), Y = 1 };
             var userLabel = new Label($"Now you are working with {currentClientLogin}") { X = Pos.Center(), Y = Pos.Bottom(welcomeLabel) };
 
-            var newCreditButton = new Button("Create new credit for user") { X = Pos.Center(), Y = Pos.Bottom(userLabel) };
+            var newCreditButton = new Button("Create new credit for user") { X = Pos.Center(), Y = Pos.Bottom(userLabel) + 3 };
             newCreditButton.Clicked += () => { Switch(CreateCreditScreen); };
 
             var userDataButton = new Button("Get user data") { X = Pos.Center(), Y = Pos.Bottom(newCreditButton) + 1 };
@@ -316,14 +312,15 @@ namespace AlifBank
 
             var tableView = new TableView()
             {
-                X = 0,
-                Y = 0,
+                X = 0, Y = 0,
                 Width = Dim.Fill(),
                 Height = Dim.Fill()
             };
 
-            top.Add(tableView);
-            top.Add(BackButton(AdminScreen, "to admin screen"));
+            top.Add(
+                tableView,
+                BackButton(AdminScreen, "to admin screen"));
+
             var dt = new DataTable ();
 			dt.Columns.Add ("Num");
 			dt.Columns.Add ("Amount");
@@ -333,7 +330,7 @@ namespace AlifBank
             var tmpBal = SQL.CalculateAccountBalance(currentClientLogin);
             decimal mean = Math.Round((-1 * tmpBal) / limit, 2);
 
-            MessageBox.Query("Test", $"limit: {limit}\nBalance:{tmpBal}\nmean: {mean}", "Ok");
+            MessageBox.Query("Data", $"limit: {limit}\nBalance:{tmpBal}\nmean: {mean}", "Ok");
 
             for (int i = 0; i < limit; ++i) {
                 dt.Rows.Add ((i + 1).ToString(), mean.ToString(), SQL.GetAccountTransactionData(currentClientLogin).Created_At.AddDays(i));
@@ -346,26 +343,23 @@ namespace AlifBank
         {
             Start(out var top);
 
-            var tableView = new TableView()
-            {
-                X = 1,
-                Y = 1,
+            var tableView = new TableView() {
+                X = 1, Y = 1,
                 Width = Dim.Fill(),
                 Height = Dim.Fill()
             };
 
-            try
-            {
+            try {
                 tableView.Table = SQL.GetAccountTransactions(currentClientLogin);
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex) {
                 MessageBox.ErrorQuery("Error !", ex.Message, "Ok");
             }
 
             top.RemoveAll();
-            top.Add(tableView);
-            top.Add(BackButton(UserDataScreen, "to user data"));
+            top.Add(
+                tableView,
+                BackButton(UserDataScreen, "to user data"));
 
             End();
         }
@@ -427,16 +421,15 @@ namespace AlifBank
                 }
             };
 
-            top.Add(regLabel);
-            top.Add(fnameLabel, fnameText);
-            top.Add(lnameLabel, lnameText);
-            top.Add(ageLabel, ageText);
-            top.Add(loginLab, loginText);
-            top.Add(passLab, passText);
-            top.Add(genderLable, genderRadio);
-            top.Add(isAdminCheckBox);
-            top.Add(submitButton);
-            top.Add(BackButton(MainScreen, "to main screen"));
+            top.Add(regLabel,
+                fnameLabel, fnameText,
+                lnameLabel, lnameText,
+                ageLabel, ageText,
+                loginLab, loginText,
+                passLab, passText,
+                genderLable, genderRadio,
+                isAdminCheckBox, submitButton,
+                BackButton(MainScreen, "to main screen"));
 
             End();
         }
@@ -462,34 +455,31 @@ namespace AlifBank
             {
                 string loginRez = loginText.Text.ToString();
                 string passRez = passText.Text.ToString();
-                if (!SQL.ExistAccount(loginRez))
-                {
+                if (!SQL.ExistAccount(loginRez)) {
                     MessageBox.ErrorQuery("Error!", $"Account {loginRez} not found.", "Ok");
                     loginText.SetFocus();
                 }
-                else if (!SQL.Auth(loginRez, passRez))
-                {
+                else if (!SQL.Auth(loginRez, passRez)) {
                     MessageBox.ErrorQuery("Error!", $"Wrong password for {loginRez}.", "Ok");
                     passText.SetFocus();
-                }
-
-                else
-                {
+                } else {
                     currentLogin = loginRez;
                     // Check that the logined user is an administrator
-                    if (SQL.IsAdmin(currentLogin))
-                    {
+                    if (SQL.IsAdmin(currentLogin)) {
                         currentLoginPriv = AdminScreen;
                         Switch(GetCurrentClientScreen);
-                    }
-                    else
-                    {
+                    } else {
                         currentLoginPriv = UserScreen;
                         Switch(UserScreen);
                     }
                 }
             };
-            top.Add(login, password, loginText, passText, doneButton, BackButton(MainScreen, "to main"));
+            top.Add(login,
+                password,
+                loginText,
+                passText,
+                doneButton,
+                BackButton(MainScreen, "to main"));
 
             End();
         }
@@ -521,15 +511,14 @@ namespace AlifBank
 
             End();
         }
-
+        /* Current running screen */
         public static Action running = MainScreen;
         static void Main()
         {
             /* Initialize the window */
             Console.OutputEncoding = System.Text.Encoding.Default;
 
-            while (running != null)
-            {
+            while (running != null) {
                 running.Invoke();
             }
             Application.Shutdown();
