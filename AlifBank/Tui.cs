@@ -261,17 +261,7 @@ namespace AlifBank
 
             End();
         }
-        static void UserTransactsScreen()
-        {
-            Start(out var top);
 
-            var mainLabel = new Label($"{currentClientLogin}'s transactions: ")
-            {
-
-            };
-
-            Application.RequestStop();
-        }
         static void AdminScreen()
         {
             Start(out var top);
@@ -439,6 +429,10 @@ namespace AlifBank
             backButton.Clicked += () => { Switch(goesWhere); }; return backButton;
         }
 
+        /*
+         * Screen for login in. Determines your privilage 
+         * and shows Admin and User screen respectively
+         */
         static void LoginScreen()
         {
             Start(out var top);
