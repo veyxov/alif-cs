@@ -387,81 +387,37 @@ namespace AlifBank
         {
             Start(out var top);
 
-            var welcomeLabel = new Label("Welcome to the admin screen !")
-            {
-                X = Pos.Center(),
-                Y = 1
-            };
+            var welcomeLabel = new Label("Welcome to the admin screen !") { X = Pos.Center(), Y = 1 };
+            var userLabel = new Label($"Now you are working with {currentClientLogin}") { X = Pos.Center(), Y = Pos.Bottom(welcomeLabel) };
 
-            var userLabel = new Label($"Now you are working with {currentClientLogin}")
-            {
-                X = Pos.Center(),
-                Y = Pos.Bottom(welcomeLabel)
-            };
+            var newCreditButton = new Button("Create new credit for user") { X = Pos.Center(), Y = Pos.Bottom(userLabel) };
+            newCreditButton.Clicked += () => { Switch(CreateCreditScreen); };
 
-            var newCreditButton = new Button("Create new credit for user")
-            {
-                X = Pos.Center(),
-                Y = Pos.Bottom(welcomeLabel) + 3
-            };
+            var userDataButton = new Button("Get user data") { X = Pos.Center(), Y = Pos.Bottom(newCreditButton) + 1 };
+            userDataButton.Clicked += () => { Switch(UserDataScreen); };
 
-            newCreditButton.Clicked += () =>
-            {
-                Switch(CreateCreditScreen);
-            };
+            var userTransactsButton = new Button("Create new credit for user") { X = Pos.Center(), Y = Pos.Bottom(userDataButton) + 1 };
+            userTransactsButton.Clicked += () => { Switch(UserTransactsScreen); };
 
-            var userDataButton = new Button("Get user data")
-            {
-                X = Pos.Center(),
-                Y = Pos.Bottom(newCreditButton) + 3
-            };
+            var graphButton = new Button("Show repayment graph") { X = Pos.Center(), Y = Pos.Bottom(userTransactsButton) + 1 };
+            graphButton.Clicked += () => { Switch(RepaymentGraphScreen); };
 
-            userDataButton.Clicked += () =>
-            {
-                Switch(UserDataScreen);
-            };
-
-            var userTransactsButton = new Button("Create new credit for user")
-            {
-                X = Pos.Center(),
-                Y = Pos.Bottom(userDataButton) + 1
-            };
-
-            userTransactsButton.Clicked += () =>
-            {
-                Switch(UserTransactsScreen);
-            };
-
-            var graphButton = new Button("Show repayment graph")
-            {
-                X = Pos.Center(),
-                Y = Pos.Bottom(userTransactsButton) + 3
-            };
-
-            graphButton.Clicked += () =>
-            {
-                Switch(RepaymentGraphScreen);
-            };
-
-            var backButton = new Button("Back")
-            {
-                X = Pos.Percent(5f),
-                Y = Pos.Percent(95f)
-            };
-
-            backButton.Clicked += () =>
-            {
+            var backButton = new Button("Back") { X = Pos.Percent(5f), Y = Pos.Percent(95f) };
+            backButton.Clicked += () => {
                 // TODO Create proper logout
                 currentLogin = null;
                 Switch(LoginScreen);
             };
 
-            top.Add(welcomeLabel, newCreditButton);
-            top.Add(userLabel);
-            top.Add(userDataButton);
-            top.Add(userTransactsButton);
-            top.Add(graphButton);
-            top.Add(backButton);
+            top.Add(
+                welcomeLabel,
+                newCreditButton,
+                userLabel,
+                userDataButton,
+                userTransactsButton,
+                graphButton,
+                backButton);
+
             End();
         }
 
