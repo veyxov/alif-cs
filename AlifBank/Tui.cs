@@ -252,6 +252,27 @@ namespace AlifBank
 
             End();
         }
+        /* Screen for depositing (addding money) to account */
+        static void depositToAccountScreen()
+        {
+            Start(out var top);
+            var inputLabel = new Label("Amount: ") { X = Pos.Center(), Y = Pos.Center() };
+            var inputText = new TextField() { X = Pos.Right(inputLabel), Y = Pos.Center(), Width = 10 };
+            var submitButton = new Button("Submit") { X = Pos.Center(), Y = Pos.AnchorEnd(1) };
+
+            submitButton.Clicked += () => {
+                try {
+                    var depositAmount = decimal.Parse(inputText.Text.ToString());
+                    SQL.DepositToAccount(currentClientLogin, depositAmount);
+                    MessageBox.Query("Success", $"Amount of {depositAmount} deposited to {currentClientLogin}", "Ok");
+                    Switch(currentLoginPriv);
+                } catch (Exception ex) {
+                    MessageBox.ErrorQuery("Error !", ex.ToString(), "Ok");
+                }
+            };
+            top.Add(inputLabel, inputText, submitButton);
+            End();
+        }
         /* This is the admin screen with all the functionality */
         static void AdminScreen()
         {
@@ -263,7 +284,10 @@ namespace AlifBank
             var newCreditButton = new Button("Create new credit for user") { X = Pos.Center(), Y = Pos.Bottom(userLabel) + 3 };
             newCreditButton.Clicked += () => { Switch(CreateCreditScreen); };
 
-            var userDataButton = new Button("Get user data") { X = Pos.Center(), Y = Pos.Bottom(newCreditButton) + 1 };
+            var depositToAccount = new Button("Deposit to account") { X = Pos.Center(), Y = Pos.Bottom(newCreditButton) + 1 };
+            depositToAccount.Clicked += () => { Switch(depositToAccountScreen); };
+
+            var userDataButton = new Button("Get user data") { X = Pos.Center(), Y = Pos.Bottom(depositToAccount) + 1 };
             userDataButton.Clicked += () => { Switch(UserDataScreen); };
 
             var graphButton = new Button("Show repayment graph") { X = Pos.Center(), Y = Pos.Bottom(userDataButton) + 1 };
@@ -279,7 +303,8 @@ namespace AlifBank
             };
 
             top.Add(
-                welcomeLabel, newCreditButton,
+                welcomeLabel, newCreditButton, 
+                depositToAccount,
                 userLabel, userDataButton,
                 graphButton, backButton);
 

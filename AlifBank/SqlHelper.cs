@@ -6,21 +6,22 @@ static class SQL
 {
     static private string cnnStr = "Data Source=localhost;Initial Catalog=AlifBank;User ID=sa;Password=qwerty112!";
 
-    static public void DepositToAccount(string login, decimal amount, int limit)
+    static public void DepositToAccount(string login, decimal amount)
     {
-        makeTransaction(login, amount, "D", limit);
+        if (amount <= 0) throw new Exception("Deposit amount needs to be positive");
+        // No limit needed when depositing
+        makeTransaction(login, amount, "Deposit", 0);
     }
 
     static public void CreditToAccount(string login, decimal amount, int limit)
     {
-        makeTransaction(login, amount, "C", limit);
+        makeTransaction(login, amount, "Credit", limit);
     }
     static private void makeTransaction(string login, decimal amount, string type, int limit)
     {
         if (!ExistAccount(login)) throw new Exception($"Account {login} does not exist");
         if (amount <= 0) throw new Exception("Amount should be positive");
         if (IsAdmin(login)) throw new Exception("Admin cannot interact with money");
-        if (type != "C" && type != "D") throw new Exception("Invalid transaction type");
 
         try
         {
@@ -42,7 +43,7 @@ static class SQL
                     cmd.CommandText = insertQuery;
 
                     cmd.Parameters.AddWithValue("@AccountId", GetIdByLogin(login));
-                    if (type == "C") amount *= -1;
+                    if (type == "Credit") amount *= -1;
                     cmd.Parameters.AddWithValue("@amount", amount);
                     cmd.Parameters.AddWithValue("@type", type);
                     cmd.Parameters.AddWithValue("@limit", limit);
