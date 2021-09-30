@@ -9,9 +9,10 @@ namespace AlifBank
 {
     class tui
     {
-        public static string currentLogin = null;
-        public static Action currentLoginPriv = null;
-        public static string currentClientLogin = null;
+        
+        public static string currentLogin = null;       // Current logined user
+        public static Action currentLoginPriv = null;   // Is current logined ADMIN or USER
+        public static string currentClientLogin = null; // Admins work with another USER
 
         static void GetCurrentClientScreen()
         {
@@ -27,7 +28,7 @@ namespace AlifBank
                     var tmpLogin = loginText.Text.ToString();
                     try {
                         if (!SQL.ExistAccount(tmpLogin)) throw new Exception($"Account {tmpLogin} not found");
-
+                        if (SQL.IsAdmin(tmpLogin))       throw new Exception("Admins can't control eachother XD");
                         currentClientLogin = tmpLogin;
                         Switch(AdminScreen);
                     } catch (Exception ex) {
@@ -462,7 +463,7 @@ namespace AlifBank
                         Switch(GetCurrentClientScreen);
                     } else {
                         currentLoginPriv = UserScreen;
-                        // The client that user works with is himself
+                        // User works with his account NOT any other account
                         currentClientLogin = currentLogin;
                         Switch(UserScreen);
                     }
