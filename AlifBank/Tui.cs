@@ -137,122 +137,54 @@ namespace AlifBank
         {
             Start(out var top);
 
-            var marStatusLabel = new Label("Maritial status")
-            {
-                X = Pos.Center(),
-                Y = 1
-            };
-
-            var marStatusRadio = new RadioGroup(new ustring[]
-            {
-              "Single",
-              "Married",
-              "Divorced",
-              "Widow(er)"
-            })
-            {
-                X = Pos.Center(),
+            var marStatusLabel = new Label("Maritial status") { X = Pos.Percent(20f), Y = 1 };
+            var marStatusRadio = new RadioGroup(new ustring[] { "Single", "Married", "Divorced", "Widow(er)" }) {
+                X = Pos.Percent(20f),
                 Y = Pos.Bottom(marStatusLabel)
             };
+            var isFromTJ = new CheckBox("I am Tajikistan citizen. (checkbox)") { X = Pos.Center(), Y = Pos.Bottom(marStatusRadio) };
 
-            var isFromTJ = new CheckBox("I am Tajikistan citizen. (checkbox)")
-            {
-                X = Pos.Center(),
-                Y = Pos.Bottom(marStatusRadio)
-            };
-
-            var loanFromTotalLable = new Label("Loan amount from total income: ")
-            {
-                X = Pos.Center(),
-                Y = Pos.Bottom(isFromTJ)
-            };
-
-            var loanFromTotalRadio = new RadioGroup(new ustring[]
-            {
+            var loanFromTotalLable = new Label("Loan amount from total income: ") { X = Pos.Percent(70f), Y = 1 };
+            var loanFromTotalRadio = new RadioGroup(new ustring[] {
               "less than 80%",
               "80%  - 150%",
               "150% - 250%",
               "more than 250%"
-            })
-            {
-                X = Pos.Center(),
-                Y = Pos.Bottom(loanFromTotalLable)
-            };
+            }) { X = Pos.Percent(70f), Y = Pos.Bottom(loanFromTotalLable) };
 
-            var creditHistoryLabel = new Label("Credit history: ")
-            {
-                X = Pos.Center(),
-                Y = Pos.Bottom(loanFromTotalRadio)
-            };
-
-            var creditHistoryRadio = new RadioGroup(new ustring[]
-            {
+            var creditHistoryLabel = new Label("Credit history: ") { X = Pos.Percent(20f), Y = Pos.Bottom(isFromTJ) };
+            var creditHistoryRadio = new RadioGroup(new ustring[] {
               "More than 3 closed credits",
               "1 - 2 closed credits",
               "No credit history",
-            })
-            {
-                X = Pos.Center(),
-                Y = Pos.Bottom(creditHistoryLabel)
-            };
+            }) { X = Pos.Percent(20f), Y = Pos.Bottom(creditHistoryLabel) };
 
-            var delayLable = new Label("Delay history: ")
-            {
-                X = Pos.Center(),
-                Y = Pos.Bottom(creditHistoryRadio)
-            };
-
+            var delayLable = new Label("Delay history: ") { X = Pos.Percent(70f), Y = Pos.Bottom(isFromTJ) };
             var delayRadio = new RadioGroup(new ustring[]
             {
               "more than 7",
               "5 - 7",
               "4",
               "less than 3",
-            })
-            {
-                X = Pos.Center(),
-                Y = Pos.Bottom(delayLable)
-            };
+            }) { X = Pos.Percent(70f), Y = Pos.Bottom(delayLable) };
 
-            var purposeLabel = new Label("Purpose: ")
-            {
-                X = Pos.Center(),
-                Y = Pos.Bottom(delayRadio)
-            };
-
+            var purposeLabel = new Label("Purpose: ") { X = Pos.Percent(20f), Y = Pos.Bottom(delayRadio) };
             var purposeRadio = new RadioGroup(new ustring[]
             {
               "Appliances",
               "Repair",
               "Phone",
               "Other",
-            })
-            {
-                X = Pos.Center(),
-                Y = Pos.Bottom(purposeLabel)
-            };
+            }) { X = Pos.Percent(20f), Y = Pos.Bottom(purposeLabel) };
 
-            var limitLabel = new Label("Delay history: ")
-            {
-                X = Pos.Center(),
-                Y = Pos.Bottom(purposeRadio)
-            };
-
+            var limitLabel = new Label("Delay history: ") { X = Pos.Percent(70f), Y = Pos.Bottom(delayRadio) + 1 };
             var limitRadio = new RadioGroup(new ustring[]
             {
               "less than 12 months",
               "more than 12 months",
-            })
-            {
-                X = Pos.Center(),
-                Y = Pos.Bottom(limitLabel)
-            };
+            }) { X = Pos.Percent(70f), Y = Pos.Bottom(limitLabel) };
 
-            var submitButton = new Button("Submit")
-            {
-                X = Pos.Center(),
-                Y = Pos.Bottom(limitRadio),
-            };
+            var submitButton = new Button("Submit") { X = Pos.Center(), Y = Pos.Bottom(purposeRadio), };
 
             submitButton.Clicked += () =>
             {
@@ -278,13 +210,9 @@ namespace AlifBank
 
                     var curBalance = SQL.CalculateAccountBalance(currentClientLogin);
 
-                    if (curBalance < 0)
-                    {
-                        throw new Exception($"Account is already in debit: {curBalance}");
-                    }
+                    if (curBalance < 0) { throw new Exception($"Account is already in debit: {curBalance}"); }
 
-                    if (points > Constants.MIN_POINTS)
-                    {
+                    if (points > Constants.MIN_POINTS) {
                         MessageBox.Query("Congrats", Constants.Congrats, "Ok");
 
                         var inputWin = new Window("Input the amount")
@@ -295,32 +223,18 @@ namespace AlifBank
                             Height = Dim.Fill()
                         };
 
-                        var inputLabel = new Label("Amount: ")
-                        {
-                            X = Pos.Center(),
-                            Y = Pos.Center()
-                        };
-                        var inputText = new TextField()
-                        {
-                            X = Pos.Right(inputLabel),
-                            Y = Pos.Center(),
-                            Width = 10
-                        };
-
-                        var curr = new Label("Somoni")
-                        {
-                            X = Pos.Right(inputText),
-                            Y = Pos.Center()
-                        };
+                        var inputLabel = new Label("Amount: ") { X = Pos.Center(), Y = Pos.Center() };
+                        var inputText = new TextField() { X = Pos.Right(inputLabel), Y = Pos.Center(), Width = 10 };
+                        var curr = new Label("Somoni") { X = Pos.Right(inputText), Y = Pos.Center() };
 
                         var limitLabel = new Label("Limit in months: ")
                         {
-                            X = Pos.Center(),
+                            X = Pos.Center() - 11,
                             Y = Pos.Bottom(inputText)
                         };
-                        var limitText = new TextField()
+                        var limitText = new TextField("6")
                         {
-                            X = Pos.Right(limitLabel),
+                            X = Pos.Left(inputText),
                             Y = Pos.Bottom(inputText),
                             Width = 10
                         };
@@ -333,43 +247,51 @@ namespace AlifBank
 
                         submitButton.Clicked += () =>
                         {
-                            try
-                            {
+                            try {
                                 SQL.CreditToAccount(currentClientLogin, decimal.Parse(inputText.Text.ToString()), int.Parse(limitText.Text.ToString()));
+                                MessageBox.Query("Success", "Operation was successfull", "Ok");
                                 inputWin.RequestStop();
-                            }
-                            catch (Exception ex)
-                            {
+                                Switch(currentLoginPriv);
+                            } catch (Exception ex) {
                                 MessageBox.ErrorQuery("Error !", ex.Message, "Ok");
                                 inputText.SetFocus();
                             }
                         };
 
-                        inputWin.Add(inputLabel, inputText, curr, limitLabel, limitText, submitButton);
-
+                        inputWin.Add(
+                                    inputLabel,
+                                     inputText,
+                                     curr,
+                                     limitLabel,
+                                     limitText,
+                                     submitButton);
                         top.Add(inputWin);
                     }
-                    else
-                    {
+                    else {
                         MessageBox.ErrorQuery("Sorry ...", Constants.SorryMessage, "Ok");
                     }
-                }
-                catch (Exception ex)
-                {
+                } catch (Exception ex) {
                     MessageBox.ErrorQuery("Error !", ex.Message + " " + ex, "Ok");
                 }
             };
 
 
-            top.Add(marStatusLabel, marStatusRadio);
-            top.Add(isFromTJ);
-            top.Add(loanFromTotalLable, loanFromTotalRadio);
-            top.Add(creditHistoryLabel, creditHistoryRadio);
-            top.Add(delayLable, delayRadio);
-            top.Add(purposeLabel, purposeRadio);
-            top.Add(limitLabel, limitRadio);
-            top.Add(submitButton);
-            top.Add(BackButton(AdminScreen, "to admin menu"));
+            top.Add(marStatusLabel,
+                marStatusRadio,
+                isFromTJ,
+                loanFromTotalLable,
+                loanFromTotalRadio,
+                creditHistoryLabel,
+                creditHistoryRadio,
+                delayLable,
+                delayRadio,
+                purposeLabel,
+                purposeRadio,
+                limitLabel,
+                limitRadio,
+                submitButton,
+                BackButton(AdminScreen, "to admin menu"));
+
             End();
         }
         static void UserTransactsScreen()
