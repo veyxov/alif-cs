@@ -74,54 +74,25 @@ namespace AlifBank
         {
             Start(out var top);
 
+            var getUserDataButton = new Button("Get account data") { X = Pos.Center(), Y = Pos.Percent(40f) };
 
-            var getUserDataButton = new Button("Get account data")
-            {
-                X = Pos.Center(),
-                Y = 1
-            };
+            var userTransactsDataButton = new Button("Get transactions data") { X = Pos.Center(), Y = Pos.Bottom(getUserDataButton) + 1 };
+            userTransactsDataButton.Clicked += () => { Switch(UserTransactsDataScreen); };
 
-            var userTransactsDataButton = new Button("Get transactions data")
-            {
-                X = Pos.Center(),
-                Y = Pos.Bottom(getUserDataButton) + 1
-            };
-
-            userTransactsDataButton.Clicked += () =>
-            {
-                Switch(UserTransactsDataScreen);
-            };
-
-            var backButton = new Button("Back")
-            {
-                X = Pos.Percent(5f),
-                Y = Pos.Percent(95f)
-            };
-
-            var backToAdminButton = new Button("Back to admin screen")
-            {
-                X = Pos.Percent(5f),
-                Y = Pos.Percent(95f)
-            };
-
-            backToAdminButton.Clicked += () =>
-            {
-                Switch(AdminScreen);
-            };
-
-            backButton.Clicked += () =>
-            {
+            var backButton = new Button("Back") { X = Pos.Percent(5f), Y = Pos.Percent(95f) };
+            var backToAdminButton = new Button("Back to admin screen") { X = Pos.Percent(5f), Y = Pos.Percent(95f) };
+            backToAdminButton.Clicked += () => { Switch(AdminScreen); };
+            backButton.Clicked += () => {
                 top.RemoveAll();
                 top.Add(getUserDataButton);
                 top.Add(backToAdminButton);
             };
-            getUserDataButton.Clicked += () =>
-            {
-                Switch(AccountDataScreen);
-            };
-            top.Add(getUserDataButton);
-            top.Add(backToAdminButton);
-            top.Add(userTransactsDataButton);
+            getUserDataButton.Clicked += () => { Switch(AccountDataScreen); };
+
+            top.Add(
+                getUserDataButton,
+                userTransactsDataButton,
+                backToAdminButton);
             End();
         }
 
@@ -318,10 +289,7 @@ namespace AlifBank
             var userDataButton = new Button("Get user data") { X = Pos.Center(), Y = Pos.Bottom(newCreditButton) + 1 };
             userDataButton.Clicked += () => { Switch(UserDataScreen); };
 
-            var userTransactsButton = new Button("Create new credit for user") { X = Pos.Center(), Y = Pos.Bottom(userDataButton) + 1 };
-            userTransactsButton.Clicked += () => { Switch(UserTransactsScreen); };
-
-            var graphButton = new Button("Show repayment graph") { X = Pos.Center(), Y = Pos.Bottom(userTransactsButton) + 1 };
+            var graphButton = new Button("Show repayment graph") { X = Pos.Center(), Y = Pos.Bottom(userDataButton) + 1 };
             graphButton.Clicked += () => { Switch(RepaymentGraphScreen); };
 
             var backButton = new Button("Back") { X = Pos.Percent(5f), Y = Pos.Percent(95f) };
@@ -336,7 +304,6 @@ namespace AlifBank
                 newCreditButton,
                 userLabel,
                 userDataButton,
-                userTransactsButton,
                 graphButton,
                 backButton);
 
