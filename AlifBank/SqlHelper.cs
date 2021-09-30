@@ -26,17 +26,12 @@ static class SQL
         try
         {
             var insertQuery = "INSERT INTO Transactions ([Account_Id], [Amount], [Type], [Limit], [Created_At]) VALUES(@accountID, @amount, @type, @limit, @createdAt)";
-            using (var cnn = new SqlConnection(cnnStr))
-            {
-                using (var cmd = cnn.CreateCommand())
-                {
+            using (var cnn = new SqlConnection(cnnStr)) {
+                using (var cmd = cnn.CreateCommand()) {
                     /* Open the connection */
-                    try
-                    {
+                    try {
                         cnn.Open();
-                    }
-                    catch (Exception ex)
-                    {
+                    } catch (Exception ex) {
                         throw new Exception(ex.Message);
                     }
                     /* Create the command */
@@ -51,8 +46,7 @@ static class SQL
 
                     /* Try to run the command */
                     int result = 0;
-                    try
-                    {
+                    try {
                         result = cmd.ExecuteNonQuery();
                         if (result <= 0) throw new Exception("Cannot make transaction");
                     }
@@ -62,38 +56,25 @@ static class SQL
                     }
                 }
             }
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             throw new Exception(ex.Message);
         }
     }
-    static public bool IsAdmin(string login)
-    {
-        return SQL.GetAccountData(login).IsAdmin;
-    }
-    static public int GetIdByLogin(string login)
-    {
-        return GetAccountData(login).Id;
-    }
+    static public bool IsAdmin(string login) { return SQL.GetAccountData(login).IsAdmin; }
+    static public int GetIdByLogin(string login) { return GetAccountData(login).Id; }
+
     static public Account GetAccountData(string login)
     {
         var getDataQuery =
             "select * from [dbo].[Accounts] WHERE Login = @login";
 
-        try
-        {
-            using (var cnn = new SqlConnection(cnnStr))
-            {
-                using (var cmd = cnn.CreateCommand())
-                {
+        try {
+            using (var cnn = new SqlConnection(cnnStr)) {
+                using (var cmd = cnn.CreateCommand()) {
                     /* Open the connection */
-                    try
-                    {
+                    try {
                         cnn.Open();
-                    }
-                    catch (Exception ex)
-                    {
+                    } catch (Exception ex) {
                         IO.Print(ex.Message, ConsoleColor.Red);
                         IO.Print("Cannot open connection !", ConsoleColor.Red);
                     }
@@ -131,10 +112,7 @@ static class SQL
                 }
             }
         }
-        catch (Exception ex)
-        {
-            throw new Exception(ex.Message);
-        }
+        catch (Exception ex) { throw new Exception(ex.Message); }
     }
 
     static public DataTable GetAccountTransactions(string login)
@@ -143,16 +121,11 @@ static class SQL
             "select * from [dbo].[Transactions] WHERE Account_Id  = @AccountID";
         var resTable = new DataTable();
 
-        using (var cnn = new SqlConnection(cnnStr))
-        {
-            using (var cmd = cnn.CreateCommand())
-            {
-                try
-                {
+        using (var cnn = new SqlConnection(cnnStr)) {
+            using (var cmd = cnn.CreateCommand()) {
+                try {
                     cnn.Open();
-                }
-                catch (Exception ex)
-                {
+                } catch (Exception ex) {
                     IO.Print(ex.Message, ConsoleColor.Red);
                     IO.Print("Cannot open connection !", ConsoleColor.Red);
                 }
@@ -175,24 +148,17 @@ static class SQL
         if (!ExistAccount(login)) throw new Exception($"Account {login} not found");
         return getAccountDataAllTable(login, "select * from [dbo].[Accounts] WHERE Login = @login");
     }
-    static public DataTable GetAccountDataAllTableAll()
-    {
-        return getAccountDataAllTable("", "select * from [dbo].[Accounts]");
-    }
+    static public DataTable GetAccountDataAllTableAll() { return getAccountDataAllTable("", "select * from [dbo].[Accounts]"); }
+
     static private DataTable getAccountDataAllTable(string login, string getDataQuery)
     {
         var resTable = new DataTable();
 
-        using (var cnn = new SqlConnection(cnnStr))
-        {
-            using (var cmd = cnn.CreateCommand())
-            {
-                try
-                {
+        using (var cnn = new SqlConnection(cnnStr)) {
+            using (var cmd = cnn.CreateCommand()) {
+                try {
                     cnn.Open();
-                }
-                catch (Exception ex)
-                {
+                } catch (Exception ex) {
                     IO.Print(ex.Message, ConsoleColor.Red);
                     IO.Print("Cannot open connection !", ConsoleColor.Red);
                 }
@@ -215,19 +181,13 @@ static class SQL
         var getDataQuery =
             "select * from [dbo].[Accounts] WHERE Login = @login";
 
-        try
-        {
-            using (var cnn = new SqlConnection(cnnStr))
-            {
-                using (var cmd = cnn.CreateCommand())
-                {
+        try {
+            using (var cnn = new SqlConnection(cnnStr)) {
+                using (var cmd = cnn.CreateCommand()) {
                     /* Open the connection */
-                    try
-                    {
+                    try {
                         cnn.Open();
-                    }
-                    catch (Exception ex)
-                    {
+                    } catch (Exception ex) {
                         IO.Print(ex.Message, ConsoleColor.Red);
                         IO.Print("Cannot open connection !", ConsoleColor.Red);
                     }
@@ -240,19 +200,15 @@ static class SQL
 
                     /* Try to run the command */
                     SqlDataReader result = null;
-                    try
-                    {
+                    try {
                         result = cmd.ExecuteReader();
                         if (!result.HasRows) throw new Exception("No data !");
-                    }
-                    catch (Exception ex)
-                    {
+                    } catch (Exception ex) {
                         throw new Exception(ex.Message);
                     }
                     while (result.Read())
                     {
-                        resAccounts.Add(new Account()
-                        {
+                        resAccounts.Add(new Account() {
                             Id = result.GetInt32(0),
                             Login = result.GetString(1),
                             Password = result.GetString(2),
@@ -261,8 +217,7 @@ static class SQL
                             Age = result.GetInt32(5),
                             Gender = result.GetInt32(6),
                             IsAdmin = result.GetInt32(7) == 0 ? false : true
-                        }
-                                );
+                        });
                     }
                 }
             }
@@ -371,23 +326,13 @@ static class SQL
                     /* Try to run the command */
 
                     int result = 0;
-                    try
-                    {
+                    try {
                         result = cmd.ExecuteNonQuery();
-                    }
-                    catch (Exception ex)
-                    {
+                    } catch (Exception ex) {
                         throw new Exception(ex.Message);
                     }
 
-                    if (result > 0)
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
+                    return result > 0 ? true : false;
                 }
             }
         }
@@ -395,10 +340,6 @@ static class SQL
         {
             throw new Exception(ex.Message);
         }
-    }
-    static public void Register()
-    {
-
     }
 
     static public bool Auth(string login, string pass)
@@ -501,6 +442,7 @@ static class SQL
         return false;
     }
 
+    // FIX: always returns first limit
     public static Transaction GetAccountTransactionData(string login)
     {
         var getDataQuery =
