@@ -77,7 +77,7 @@ namespace AlifBank
 
             var backButton = new Button("Back") { X = Pos.Percent(5f), Y = Pos.Percent(95f) };
             var backToAdminButton = new Button("Back to admin screen") { X = Pos.Percent(5f), Y = Pos.Percent(95f) };
-            backToAdminButton.Clicked += () => { Switch(AdminScreen); };
+            backToAdminButton.Clicked += () => { Switch(currentLoginPriv); };
             backButton.Clicked += () => {
                 top.RemoveAll();
                 top.Add(getUserDataButton);
@@ -96,8 +96,26 @@ namespace AlifBank
         {
             Start(out var top);
 
-            throw new NotImplementedException();
+            var welcomeLabel = new Label($"Welcome {currentLogin}") { X = Pos.Center(), Y = Pos.Percent(20f) };
 
+            var userDataButton = new Button("Get user data") { X = Pos.Center(), Y = Pos.Bottom(welcomeLabel) + 1 };
+            userDataButton.Clicked += () => { Switch(UserDataScreen); };
+
+            var graphButton = new Button("Show repayment graph") { X = Pos.Center(), Y = Pos.Bottom(userDataButton) + 1 };
+            graphButton.Clicked += () => { Switch(RepaymentGraphScreen); };
+
+            var backButton = new Button("Back") { X = Pos.Percent(5f), Y = Pos.Percent(95f) };
+            backButton.Clicked += () => {
+                // TODO Create proper logout
+                currentLogin = null;
+                Switch(LoginScreen);
+            };
+
+            top.Add(
+                welcomeLabel,
+                userDataButton,
+                graphButton,
+                backButton);
             End();
         }
         static void CreateCreditScreen()
@@ -309,7 +327,7 @@ namespace AlifBank
 
             top.Add(
                 tableView,
-                BackButton(AdminScreen, "to admin screen"));
+                BackButton(currentLoginPriv, "to user profile"));
 
             var dt = new DataTable ();
 			dt.Columns.Add ("Num");
@@ -464,6 +482,8 @@ namespace AlifBank
                         Switch(GetCurrentClientScreen);
                     } else {
                         currentLoginPriv = UserScreen;
+                        // The client that user works with is himself
+                        currentClientLogin = currentLogin;
                         Switch(UserScreen);
                     }
                 }
