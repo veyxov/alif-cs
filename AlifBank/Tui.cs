@@ -34,8 +34,7 @@ namespace AlifBank
                         MessageBox.ErrorQuery("Error !", ex.Message, "Ok");
                     }
                 };
-                top.Add(loginLabel, loginText);
-                top.Add(doneButton);
+                top.Add(loginLabel, loginText, doneButton);
             }
             catch (Exception ex) {
                 MessageBox.ErrorQuery("Error !", ex.Message, "Ok");
@@ -61,8 +60,7 @@ namespace AlifBank
             }
 
             top.RemoveAll();
-            top.Add(tableView,
-                BackButton(UserDataScreen, "to user data"));
+            top.Add(tableView, BackButton(UserDataScreen, "to user data"));
 
             End();
         }
@@ -80,15 +78,11 @@ namespace AlifBank
             backToAdminButton.Clicked += () => { Switch(currentLoginPriv); };
             backButton.Clicked += () => {
                 top.RemoveAll();
-                top.Add(getUserDataButton);
-                top.Add(backToAdminButton);
+                top.Add(getUserDataButton, backToAdminButton);
             };
             getUserDataButton.Clicked += () => { Switch(AccountDataScreen); };
 
-            top.Add(
-                getUserDataButton,
-                userTransactsDataButton,
-                backToAdminButton);
+            top.Add( getUserDataButton, userTransactsDataButton, backToAdminButton);
             End();
         }
 
@@ -112,10 +106,8 @@ namespace AlifBank
             };
 
             top.Add(
-                welcomeLabel,
-                userDataButton,
-                graphButton,
-                backButton);
+                welcomeLabel, userDataButton,
+                graphButton, backButton);
             End();
         }
         static void CreateCreditScreen()
@@ -244,12 +236,10 @@ namespace AlifBank
                         };
 
                         inputWin.Add(
-                                    inputLabel,
-                                     inputText,
-                                     curr,
-                                     limitLabel,
-                                     limitText,
-                                     submitButton);
+                                    inputLabel, inputText,
+                                     curr, limitLabel,
+                                     limitText, submitButton);
+
                         top.Add(inputWin);
                     }
                     else {
@@ -262,20 +252,13 @@ namespace AlifBank
 
 
             top.Add(marStatusLabel,
-                marStatusRadio,
-                isFromTJ,
-                loanFromTotalLable,
-                loanFromTotalRadio,
-                creditHistoryLabel,
-                creditHistoryRadio,
-                delayLable,
-                delayRadio,
-                purposeLabel,
-                purposeRadio,
-                limitLabel,
-                limitRadio,
-                submitButton,
-                BackButton(AdminScreen, "to admin menu"));
+                marStatusRadio, isFromTJ,
+                loanFromTotalLable, loanFromTotalRadio,
+                creditHistoryLabel, creditHistoryRadio,
+                delayLable, delayRadio,
+                purposeLabel, purposeRadio,
+                limitLabel, limitRadio,
+                submitButton, BackButton(AdminScreen, "to admin menu"));
 
             End();
         }
@@ -304,12 +287,9 @@ namespace AlifBank
             };
 
             top.Add(
-                welcomeLabel,
-                newCreditButton,
-                userLabel,
-                userDataButton,
-                graphButton,
-                backButton);
+                welcomeLabel, newCreditButton,
+                userLabel, userDataButton,
+                graphButton, backButton);
 
             End();
         }
@@ -489,10 +469,8 @@ namespace AlifBank
                 }
             };
             top.Add(login,
-                password,
-                loginText,
-                passText,
-                doneButton,
+                password, loginText,
+                passText, doneButton,
                 BackButton(MainScreen, "to main"));
 
             End();
@@ -518,10 +496,8 @@ namespace AlifBank
             exitButton.Clicked += () => { Switch(null); };
 
             top.Add(
-                helloLabe,
-                loginButton,
-                registerButton,
-                exitButton);
+                helloLabe, loginButton,
+                registerButton, exitButton);
 
             End();
         }
