@@ -14,6 +14,7 @@ namespace AlifBank
         public static Action currentLoginPriv = null;   // Is current logined ADMIN or USER
         public static string currentClientLogin = null; // Admins work with another USER
 
+        /* This is a helper screen for AdminScreen for choosing an account to work with */
         static void GetCurrentClientScreen()
         {
             Start(out var top);
@@ -43,10 +44,13 @@ namespace AlifBank
             top.Add(BackButton(LoginScreen, "to login screen"));
             End();
         }
+
+        /* This screen shows account data such as: Name, age ... */
         static void AccountDataScreen()
         {
             Start(out var top);
 
+            // Table that holds the data
             var tableView = new TableView() {
                 X = 1, Y = 1,
                 Width = Dim.Fill(),
@@ -55,8 +59,7 @@ namespace AlifBank
 
             try {
                 tableView.Table = SQL.GetAccountDataAllTableSpecific(currentClientLogin);
-            }
-            catch (Exception ex) {
+            } catch (Exception ex) {
                 MessageBox.ErrorQuery("Error !", ex.Message, "Ok");
             }
 
@@ -65,6 +68,7 @@ namespace AlifBank
 
             End();
         }
+        /* Choose which user data to show */
         static void UserDataScreen()
         {
             Start(out var top);
@@ -87,6 +91,7 @@ namespace AlifBank
             End();
         }
 
+        /* This screen shows when your account is a USER account (LIMITED FUNCTIONALITY)*/
         static void UserScreen()
         {
             Start(out var top);
@@ -111,6 +116,7 @@ namespace AlifBank
                 graphButton, backButton);
             End();
         }
+        /* Screen for creating credit for user */
         static void CreateCreditScreen()
         {
             Start(out var top);
@@ -178,13 +184,9 @@ namespace AlifBank
                 try
                 {
                     var points = Program.CalculatePoints(currentClientLogin,
-                            sMaritStatus,
-                            sIsFromTj,
-                            sLoanAmount,
-                            sCredHistory,
-                            sPurpose,
-                            sDelHistory,
-                            sLimit);
+                            sMaritStatus, sIsFromTj,
+                            sLoanAmount, sCredHistory,
+                            sPurpose, sDelHistory, sLimit);
 
                     var curBalance = SQL.CalculateAccountBalance(currentClientLogin);
 
@@ -205,23 +207,10 @@ namespace AlifBank
                         var inputText = new TextField() { X = Pos.Right(inputLabel), Y = Pos.Center(), Width = 10 };
                         var curr = new Label("Somoni") { X = Pos.Right(inputText), Y = Pos.Center() };
 
-                        var limitLabel = new Label("Limit in months: ")
-                        {
-                            X = Pos.Center() - 11,
-                            Y = Pos.Bottom(inputText)
-                        };
-                        var limitText = new TextField("6")
-                        {
-                            X = Pos.Left(inputText),
-                            Y = Pos.Bottom(inputText),
-                            Width = 10
-                        };
+                        var limitLabel = new Label("Limit in months: ") { X = Pos.Center() - 11, Y = Pos.Bottom(inputText) };
+                        var limitText = new TextField("6") { X = Pos.Left(inputText), Y = Pos.Bottom(inputText), Width = 10 };
 
-                        var submitButton = new Button("Submit")
-                        {
-                            X = Pos.Center(),
-                            Y = Pos.Bottom(limitText),
-                        };
+                        var submitButton = new Button("Submit") { X = Pos.Center(), Y = Pos.Bottom(limitText), };
 
                         submitButton.Clicked += () =>
                         {
@@ -263,7 +252,7 @@ namespace AlifBank
 
             End();
         }
-
+        /* This is the admin screen with all the functionality */
         static void AdminScreen()
         {
             Start(out var top);
@@ -282,8 +271,10 @@ namespace AlifBank
 
             var backButton = new Button("Back") { X = Pos.Percent(5f), Y = Pos.Percent(95f) };
             backButton.Clicked += () => {
-                // TODO Create proper logout
+                // Reset the global variables
                 currentLogin = null;
+                currentLoginPriv = null;
+                currentClientLogin = null;
                 Switch(LoginScreen);
             };
 
@@ -294,7 +285,7 @@ namespace AlifBank
 
             End();
         }
-
+        /* This screen shows your repayment table */
         static void RepaymentGraphScreen()
         {
             Start(out var top);
@@ -315,19 +306,21 @@ namespace AlifBank
 			dt.Columns.Add ("Amount");
 			dt.Columns.Add ("Expiration date");
 
-            int limit = SQL.GetAccountTransactionData(currentClientLogin).Limit;
-            var tmpBal = SQL.CalculateAccountBalance(currentClientLogin);
-            decimal mean = Math.Round((-1 * tmpBal) / limit, 2);
+            int limit = SQL.GetAccountTransactionData(currentClientLogin).Limit; // Get the limit for current credit
+            var tmpBal = SQL.CalculateAccountBalance(currentClientLogin);        // Current balance
+            decimal mean = Math.Round((-1 * tmpBal) / limit, 2);                 // Current mean rounded and made positive
 
             MessageBox.Query("Data", $"limit: {limit}\nBalance:{tmpBal}\nmean: {mean}", "Ok");
 
             for (int i = 0; i < limit; ++i) {
+                // Full up every row with data from user
                 dt.Rows.Add ((i + 1).ToString(), mean.ToString(), SQL.GetAccountTransactionData(currentClientLogin).Created_At.AddDays(i));
             }
 
             tableView.Table = dt;
             End();
         }
+        /* This screen shows your activity */
         static void UserTransactsDataScreen()
         {
             Start(out var top);
@@ -353,6 +346,7 @@ namespace AlifBank
             End();
         }
 
+        /* Screen for registering new user */
         static void RegisterScreen()
         {
             Start(out var top);
@@ -428,10 +422,7 @@ namespace AlifBank
             backButton.Clicked += () => { Switch(goesWhere); }; return backButton;
         }
 
-        /*
-         * Screen for login in. Determines your privilage 
-         * and shows Admin and User screen respectively
-         */
+        // Screen for login in. Determines your privilage and shows Admin and User screen respectively
         static void LoginScreen()
         {
             Start(out var top);
