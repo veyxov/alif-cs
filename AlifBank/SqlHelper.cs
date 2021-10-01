@@ -4,7 +4,8 @@ using System.Data;
 using System.Data.SqlClient;
 static class SQL
 {
-    static private string cnnStr = "Data Source=localhost;Initial Catalog=AlifBank;User ID=sa;Password=qwerty112!";
+    //static private string cnnStr = "Data Source=localhost;Initial Catalog=AlifBank;User ID=sa;Password=qwerty112!";
+    static private string cnnStr = "Server=localhost;Database=AlifBank;Trusted_Connection=True";
 
     static public void DepositToAccount(string login, decimal amount)
     {
@@ -117,6 +118,7 @@ static class SQL
 
     static public DataTable GetAccountTransactions(string login)
     {
+
         var getDataQuery = 
             "select * from [dbo].[Transactions] WHERE Account_Id  = @AccountID";
         var resTable = new DataTable();
@@ -473,15 +475,8 @@ static class SQL
 
                     /* Try to run the command */
                     SqlDataReader result = null;
-                    try
-                    {
-                        result = cmd.ExecuteReader();
+                    result = cmd.ExecuteReader();
                         if (!result.HasRows) throw new Exception("No data !");
-                    }
-                    catch
-                    {
-
-                    }
                     result.Read();
                     // Create new Account instance using the data
                     return new Transaction()

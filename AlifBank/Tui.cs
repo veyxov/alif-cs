@@ -331,18 +331,21 @@ namespace AlifBank
 			dt.Columns.Add ("Amount");
 			dt.Columns.Add ("Expiration date");
 
-            int limit = SQL.GetAccountTransactionData(currentClientLogin).Limit; // Get the limit for current credit
-            var tmpBal = SQL.CalculateAccountBalance(currentClientLogin);        // Current balance
-            decimal mean = Math.Round((-1 * tmpBal) / limit, 2);                 // Current mean rounded and made positive
+            try {
+				int limit = SQL.GetAccountTransactionData(currentClientLogin).Limit;
+				var tmpBal = SQL.CalculateAccountBalance(currentClientLogin);
+				decimal mean = Math.Round((-1 * tmpBal) / limit, 2);
 
-            MessageBox.Query("Data", $"limit: {limit}\nBalance:{tmpBal}\nmean: {mean}", "Ok");
+				MessageBox.Query("Data", $"limit: {limit}\nBalance:{tmpBal}\nmean: {mean}", "Ok");
 
-            for (int i = 0; i < limit; ++i) {
-                // Full up every row with data from user
-                dt.Rows.Add ((i + 1).ToString(), mean.ToString(), SQL.GetAccountTransactionData(currentClientLogin).Created_At.AddDays(i));
-            }
+				for (int i = 0; i < limit; ++i) {
+					dt.Rows.Add ((i + 1).ToString(), mean.ToString(), SQL.GetAccountTransactionData(currentClientLogin).Created_At.AddDays(i));
+				}
 
-            tableView.Table = dt;
+				tableView.Table = dt;
+			} catch (Exception ex) {
+                MessageBox.ErrorQuery("Error !", ex.ToString(), "Ok");
+			}
             End();
         }
         /* This screen shows your activity */
@@ -407,25 +410,42 @@ namespace AlifBank
 
             submitButton.Clicked += () =>
             {
-                // TODO: Validate data
-                var newAccount = new Account()
-                {
-                    FistName = fnameText.Text.ToString(),
-                    LastName = lnameText.Text.ToString(),
-                    Age = int.Parse(ageText.Text.ToString()),
-                    Login = loginText.Text.ToString(),
-                    Password = passText.Text.ToString(),
-                    Gender = genderRadio.SelectedItem,
-                    IsAdmin = isAdminCheckBox.Checked
-                };
-
-                bool result = false;
+                var _fname = fnameText.Text.ToString();
+                var _lname = lnameText.Text.ToString();
+                var _ageStr = ageText.Text.ToString();
+                var _login = loginText.Text.ToString();
+                var _pass = passText.Text.ToString();
+                Account newAccount = null;
                 try {
-                    result = SQL.CreateAccount(newAccount);
-                    if (result) MessageBox.Query("Success !", $"Created account {newAccount.Login}", "Ok");
-                    Switch(MainScreen);
+					if (!int.TryParse(_ageStr, out var _age))                         throw new Exception("Age can not be empty");
+                    if (String.IsNullOrEmpty(_fname) || String.IsNullOrEmpty(_lname)) throw new Exception("Names can not be empty");
+                    if (_age <= 0 || _age >= 150)                                     throw new Exception("Invalid age");
+                    if (_pass.Length < 6)                                             throw new Exception("Password should be 6 chars or longer");
+					// Check age for compilance
+					newAccount = new Account()
+					{
+						FistName =_fname,
+						LastName = _lname,
+						Age = _age,
+						Login = _login,
+						Password = _pass,
+						/* This two don't need checks. */
+						Gender = genderRadio.SelectedItem,
+						IsAdmin = isAdminCheckBox.Checked
+					};
+					bool result = false;
+					try {
+						result = SQL.CreateAccount(newAccount);
+						if (result) MessageBox.Query("Success !", $"Created account {newAccount.Login}", "Ok");
+						Switch(MainScreen);
+					} 
+					catch (System.FormatException) {
+						MessageBox.ErrorQuery("Error !", "Please fill age form", "Ok");
+					} catch (Exception ex) {
+						MessageBox.ErrorQuery("Error !", ex.ToString(), "Ok");
+					}
                 } catch (Exception ex) {
-                    MessageBox.ErrorQuery("Error !", ex.Message, "Ok");
+                    MessageBox.ErrorQuery("Error !", ex.ToString(), "Ok");
                 }
             };
 
@@ -523,12 +543,17 @@ namespace AlifBank
         static void Main()
         {
             /* Initialize the window */
-            Console.OutputEncoding = System.Text.Encoding.Default;
-
-            while (running != null) {
-                running.Invoke();
+            try {
+                Console.OutputEncoding = System.Text.Encoding.Default;
+                while (running != null) {
+                    running.Invoke();
+                }
+                Application.Shutdown();
+            } catch (Exception ex) {
+                Console.WriteLine("Cannot initialize applicatoin, CHECK YOUR SQL connection string or terminal emulator.");
+                Console.WriteLine(ex.Message);
             }
-            Application.Shutdown();
         }
     }
 }
+// Select Id from table order by id desc limit 1
