@@ -73,13 +73,7 @@ static class SQL
             using (var cnn = new SqlConnection(cnnStr)) {
                 using (var cmd = cnn.CreateCommand()) {
                     /* Open the connection */
-                    try {
-                        cnn.Open();
-                    } catch (Exception ex) {
-                        IO.Print(ex.Message, ConsoleColor.Red);
-                        IO.Print("Cannot open connection !", ConsoleColor.Red);
-                    }
-                    IO.Debug("Connection opened !");
+                    cnn.Open();
 
                     /* Create the command */
                     cmd.CommandText = getDataQuery;
@@ -125,13 +119,7 @@ static class SQL
 
         using (var cnn = new SqlConnection(cnnStr)) {
             using (var cmd = cnn.CreateCommand()) {
-                try {
-                    cnn.Open();
-                } catch (Exception ex) {
-                    IO.Print(ex.Message, ConsoleColor.Red);
-                    IO.Print("Cannot open connection !", ConsoleColor.Red);
-                }
-                IO.Debug("Connection opened !");
+                cnn.Open();
 
                 /* Create the command */
                 cmd.CommandText = getDataQuery;
@@ -158,13 +146,7 @@ static class SQL
 
         using (var cnn = new SqlConnection(cnnStr)) {
             using (var cmd = cnn.CreateCommand()) {
-                try {
-                    cnn.Open();
-                } catch (Exception ex) {
-                    IO.Print(ex.Message, ConsoleColor.Red);
-                    IO.Print("Cannot open connection !", ConsoleColor.Red);
-                }
-                IO.Debug("Connection opened !");
+                cnn.Open();
 
                 /* Create the command */
                 cmd.CommandText = getDataQuery;
@@ -187,13 +169,7 @@ static class SQL
             using (var cnn = new SqlConnection(cnnStr)) {
                 using (var cmd = cnn.CreateCommand()) {
                     /* Open the connection */
-                    try {
-                        cnn.Open();
-                    } catch (Exception ex) {
-                        IO.Print(ex.Message, ConsoleColor.Red);
-                        IO.Print("Cannot open connection !", ConsoleColor.Red);
-                    }
-                    IO.Debug("Connection opened !");
+                    cnn.Open();
 
                     /* Create the command */
                     cmd.CommandText = getDataQuery;
@@ -288,15 +264,7 @@ static class SQL
                 using (var cmd = cnn.CreateCommand())
                 {
                     /* Open the connection */
-                    try
-                    {
-                        cnn.Open();
-                    }
-                    catch (Exception ex)
-                    {
-                        throw new Exception(ex.Message);
-                    }
-                    IO.Debug("Connection opened !");
+                    cnn.Open();
 
                     /* Create the command */
                     cmd.CommandText = insertQuery;
@@ -337,16 +305,7 @@ static class SQL
             using (var cmd = cnn.CreateCommand())
             {
                 /* Open the connection */
-                try
-                {
-                    cnn.Open();
-                }
-                catch (Exception ex)
-                {
-                    IO.Print(ex.Message, ConsoleColor.Red);
-                    IO.Print("Cannot open connection !", ConsoleColor.Red);
-                }
-                IO.Debug("Connection opened !");
+                cnn.Open();
 
                 /* Create the command */
                 cmd.CommandText = authQuery;
@@ -355,15 +314,7 @@ static class SQL
 
                 /* Try to run the command */
                 SqlDataReader result = null;
-                try
-                {
-                    result = cmd.ExecuteReader();
-                }
-                catch (Exception ex)
-                {
-                    IO.Print(ex.Message, ConsoleColor.Red);
-                    IO.Print("Cannot execute query !", ConsoleColor.Red);
-                }
+                result = cmd.ExecuteReader();
                 string originalPassword = null;
                 while (result.Read()) originalPassword = result.GetString(0);
                 if (originalPassword == pass)
@@ -386,16 +337,7 @@ static class SQL
             using (var cmd = cnn.CreateCommand())
             {
                 /* Open the connection */
-                try
-                {
-                    cnn.Open();
-                }
-                catch (Exception ex)
-                {
-                    IO.Print(ex.Message, ConsoleColor.Red);
-                    IO.Print("Cannot open connection !", ConsoleColor.Red);
-                }
-                IO.Debug("Connection opened !");
+                cnn.Open();
 
                 /* Create the command */
                 cmd.CommandText = checkQuery;
@@ -404,25 +346,9 @@ static class SQL
 
                 /* Try to run the command */
                 SqlDataReader result = null;
-                try
-                {
-                    result = cmd.ExecuteReader();
-                }
-                catch (Exception ex)
-                {
-                    IO.Print(ex.Message, ConsoleColor.Red);
-                    IO.Print("Cannot execute query !", ConsoleColor.Red);
-                }
+                result = cmd.ExecuteReader();
 
-                if (result.HasRows)
-                {
-                    IO.Print($"Account {login} found successfully !", ConsoleColor.Green);
-                    return true;
-                }
-                else
-                {
-                    IO.Print($"Account not found!", ConsoleColor.Red);
-                }
+                if (result.HasRows) return true;
             }
         }
         return false;

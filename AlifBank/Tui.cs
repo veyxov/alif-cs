@@ -421,6 +421,8 @@ namespace AlifBank
                     if (String.IsNullOrEmpty(_fname) || String.IsNullOrEmpty(_lname)) throw new Exception("Names can not be empty");
                     if (_age <= 0 || _age >= 150)                                     throw new Exception("Invalid age");
                     if (_pass.Length < 6)                                             throw new Exception("Password should be 6 chars or longer");
+                    if (String.IsNullOrEmpty(_login))                                 throw new Exception("Please fill the login field");
+
 					// Check age for compilance
 					newAccount = new Account()
 					{
