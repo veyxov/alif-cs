@@ -267,10 +267,10 @@ namespace AlifBank
                     MessageBox.Query("Success", $"Amount of {depositAmount} deposited to {currentClientLogin}", "Ok");
                     Switch(currentLoginPriv);
                 } catch (Exception ex) {
-                    MessageBox.ErrorQuery("Error !", ex.ToString(), "Ok");
+                    MessageBox.ErrorQuery("Error !", ex.Message, "Ok");
                 }
             };
-            top.Add(inputLabel, inputText, submitButton);
+            top.Add(inputLabel, inputText, submitButton, BackButton(currentLoginPriv, "to menu"));
             End();
         }
         /* This is the admin screen with all the functionality */
@@ -344,7 +344,7 @@ namespace AlifBank
 
 				tableView.Table = dt;
 			} catch (Exception ex) {
-                MessageBox.ErrorQuery("Error !", ex.ToString(), "Ok");
+                MessageBox.ErrorQuery("Error !", ex.Message, "Ok");
 			}
             End();
         }
@@ -442,10 +442,10 @@ namespace AlifBank
 					catch (System.FormatException) {
 						MessageBox.ErrorQuery("Error !", "Please fill age form", "Ok");
 					} catch (Exception ex) {
-						MessageBox.ErrorQuery("Error !", ex.ToString(), "Ok");
+						MessageBox.ErrorQuery("Error !", ex.Message, "Ok");
 					}
                 } catch (Exception ex) {
-                    MessageBox.ErrorQuery("Error !", ex.ToString(), "Ok");
+                    MessageBox.ErrorQuery("Error !", ex.Message, "Ok");
                 }
             };
 

@@ -4,8 +4,8 @@ using System.Data;
 using System.Data.SqlClient;
 static class SQL
 {
-    //static private string cnnStr = "Data Source=localhost;Initial Catalog=AlifBank;User ID=sa;Password=qwerty112!";
-    static private string cnnStr = "Server=localhost;Database=AlifBank;Trusted_Connection=True";
+    static private string cnnStr = "Data Source=localhost;Initial Catalog=AlifBank;User ID=sa;Password=qwerty112!";
+    //static private string cnnStr = "Server=localhost;Database=AlifBank;Trusted_Connection=True";
 
     static public void DepositToAccount(string login, decimal amount)
     {
@@ -237,51 +237,35 @@ static class SQL
             "select SUM([Amount]) AS Balance FROM [dbo].[Transactions] WHERE [Account_Id] = @AccountID";
 
         decimal balance = 0;
-        try
+        using (var cnn = new SqlConnection(cnnStr))
         {
-            using (var cnn = new SqlConnection(cnnStr))
+            using (var cmd = cnn.CreateCommand())
             {
-                using (var cmd = cnn.CreateCommand())
+                /* Open the connection */
+                cnn.Open();
+
+                /* Create the command */
+                cmd.CommandText = getSumQuery;
+                /* Add parameters */
+                cmd.Parameters.AddWithValue("@AccountID", SQL.GetIdByLogin(login));
+
+                /* Try to run the command */
+
+                var reader = cmd.ExecuteReader();
+                if(reader.HasRows)
                 {
-                    /* Open the connection */
-                    try
+                    while (reader.Read())
                     {
-                        cnn.Open();
-                    }
-                    catch (Exception ex)
-                    {
-                        throw new Exception(ex.Message);
-                    }
-                    IO.Debug("Connection opened !");
-
-                    /* Create the command */
-                    cmd.CommandText = getSumQuery;
-                    /* Add parameters */
-                    cmd.Parameters.AddWithValue("@AccountID", SQL.GetIdByLogin(login));
-
-                    /* Try to run the command */
-
-                    var reader = cmd.ExecuteReader();
-                    if(reader.HasRows)
-                    {
-                        while (reader.Read())
-                        {
-                            if (reader["Balance"] == DBNull.Value) {
-                                // TODO: what to do when null
-                            } else {
-                                balance = decimal.Parse(reader["Balance"].ToString());
-                            }
+                        if (reader["Balance"] == DBNull.Value) {
+                            // TODO: what to do when null
+                        } else {
+                            balance = decimal.Parse(reader["Balance"].ToString());
                         }
-                    } else {
-                        throw new Exception("Sum returned NULL");
                     }
-
+                } else {
+                    throw new Exception("Sum returned NULL");
                 }
             }
-        }
-        catch (Exception ex)
-        {
-            throw new Exception(ex.ToString());
         }
         return balance;
     }
@@ -448,52 +432,33 @@ static class SQL
     public static Transaction GetAccountTransactionData(string login)
     {
         var getDataQuery =
-            "select * from [dbo].[Transactions] WHERE Account_Id = @accountID";
+            "select * from [dbo].[Transactions] WHERE Account_Id = @accountID ORDER BY Created_At desc";
 
-        try
+        using (var cnn = new SqlConnection(cnnStr))
         {
-            using (var cnn = new SqlConnection(cnnStr))
+            using (var cmd = cnn.CreateCommand())
             {
-                using (var cmd = cnn.CreateCommand())
+                cnn.Open();
+                /* Create the command */
+                cmd.CommandText = getDataQuery;
+                cmd.Parameters.AddWithValue("@AccountID", SQL.GetIdByLogin(login));
+
+                /* Try to run the command */
+                SqlDataReader result = null;
+                result = cmd.ExecuteReader();
+                if (!result.HasRows) throw new Exception("No data !");
+                result.Read();
+                // Create new Account instance using the data
+                return new Transaction()
                 {
-                    /* Open the connection */
-                    try
-                    {
-                        cnn.Open();
-                    }
-                    catch (Exception ex)
-                    {
-                        IO.Print(ex.Message, ConsoleColor.Red);
-                        IO.Print("Cannot open connection !", ConsoleColor.Red);
-                    }
-                    IO.Debug("Connection opened !");
-
-                    /* Create the command */
-                    cmd.CommandText = getDataQuery;
-
-                    cmd.Parameters.AddWithValue("@AccountID", SQL.GetIdByLogin(login));
-
-                    /* Try to run the command */
-                    SqlDataReader result = null;
-                    result = cmd.ExecuteReader();
-                        if (!result.HasRows) throw new Exception("No data !");
-                    result.Read();
-                    // Create new Account instance using the data
-                    return new Transaction()
-                    {
-                        Id = result.GetInt32(0),
-                        AccountId = result.GetInt32(1),
-                        Amount = result.GetDecimal(2),
-                        Type = result.GetString(3),
-                        Limit = result.GetInt32(4),
-                        Created_At = result.GetDateTime(5)
-                    };
-                }
+                    Id = result.GetInt32(0),
+                    AccountId = result.GetInt32(1),
+                    Amount = result.GetDecimal(2),
+                    Type = result.GetString(3),
+                    Limit = result.GetInt32(4),
+                    Created_At = result.GetDateTime(5)
+                };
             }
-        }
-        catch (Exception ex)
-        {
-            throw new Exception(ex.ToString());
         }
     }
 }
