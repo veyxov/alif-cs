@@ -21,7 +21,7 @@ static public class IO {
 
     /* This method prompts WHAT and gets the input from Console*/
     static public T GetInput<T>(string what = "") {
-        IO.Print(what, ConsoleColor.Yellow, false);
+        IO.Print(what, ConsoleColor.Yellow, true);
         var input = (Console.ReadLine());
         /* Change the input type to the T type */
         return (T)Convert.ChangeType(input, typeof(T));
