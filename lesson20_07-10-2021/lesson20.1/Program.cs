@@ -83,7 +83,7 @@ class Program
         if (clnts.Remove(curClient))
             IO.Debug("User deleted !", ConsoleColor.Green);
     }
-    static public void Select()
+    static public void Select(int indx)
     {
         lock (Globals.Locker)
         {
@@ -91,7 +91,6 @@ class Program
             {
                 IO.Print($"{i} - {clnts[i].Balance}", ConsoleColor.Green);
             }
-            int indx = IO.GetInput<int>("Choose the index: ");
 
             if (indx < 0 || indx > clnts.Count)
             {
@@ -132,38 +131,40 @@ class Program
 
         var mainThread = Thread.CurrentThread;
 
-        // Create
-        Thread CreateThread = new Thread(
-                () =>
-                {
-                    Create(1, "Ismoil");
-                    Create(2, "Test");
-                }
-                );
-        CreateThread.Start();
-        // Second account
+        bool running = true;
+        while (running) {
+            IO.Print("1.Create\t2.Update\t3.Select\t4.Delete");
 
-        // Delete
-        //Thread DeleteThread = new Thread(Delete);
-        //DeleteThread.Start();
+            var cmd = IO.GetInput<int>("Input your command: ");
 
-        // Update
-        Thread UpdateThread = new Thread(
-                () => { 
-                    Update(1, 100);
-                    Update(2, 200);
-                    Update(2, -20);
-                }
-                );
-        // Wait for the account creation
-        Thread.Sleep(1000);
-        UpdateThread.Start();
-        //// Select
-        //Thread SelectThread = new Thread(Select);
-        //SelectThread.Start();
-
-        Thread.Sleep(2000);
-        
+            switch (cmd) {
+                case 1:
+                    var id = IO.GetInput<int>("Input id: ");
+                    var name = IO.GetInput<string>("Input name: ");
+                    var CreateThread = new Thread(() => Create(id, name));
+                    CreateThread.Start();
+                    break;
+                case 2:
+                    var clientId = IO.GetInput<int>("Input id: ");
+                    var upd = IO.GetInput<decimal>("Input amount: ");
+                    var UpdateThread = new Thread(() => Update(clientId, upd));
+                    UpdateThread.Start();
+                    break;
+                case 3:
+                    var indx = IO.GetInput<int>("Input the id: ");
+                    var SelectThread = new Thread(() => Select(indx));
+                    SelectThread.Start();
+                    break;
+                case 4:
+                    var idtodel = IO.GetInput<int>("Input the id: ");
+                    var DeleteThread = new Thread(() => Delete(idtodel));
+                    DeleteThread.Start();
+                    break;
+                default:
+                    running = false;
+                    break;
+            }
+        }
         IO.GetInput<string>();
     }
     static public void Refresh(object obj)
@@ -172,8 +173,10 @@ class Program
         {
             if (i.LastChange != 0)
             {
+                Console.Clear();
                 i.GetBalanceInfo();
                 i.LastChange = 0;
+                IO.Print("1.Create\t2.Update\t3.Select");
             }
         }
     }
