@@ -8,14 +8,16 @@ class Program
 
     /* Constants used in the program */
     const string chars = "$%#@!*abcdefghijklmnopqrstuvwxyz1234567890?;:ABCDEFGHIJKLMNOPQRSTUVWXYZ^&";
-    const int minLen = 5;
-    const int maxLen = 25;
 
     static int height = Console.WindowHeight;
+
     static int width = Console.WindowWidth;
 
-    const int flowSpeed = 40;
-    const int genSpeed = 100;
+    static int minLen = 5;
+    static int maxLen = height;
+
+    const int flowSpeed = 50;
+    const int genSpeed = 500;
 
     /* Get a random int from chars array and convert it to char */
     static char GetRandomChar() { 
@@ -44,26 +46,30 @@ class Program
             Console.SetCursorPosition(x, y + i - 1);
             ChColor(ConsoleColor.Green);
             Console.Write(curChar);
+            //
+            // Go two back and redraw with green
+            Console.SetCursorPosition(x, y + i - 2);
+            ChColor(ConsoleColor.DarkGreen);
+            Console.Write(curChar);
 
             Thread.Sleep(flowSpeed);
         }
     }
-    static void CleanLine(int x, int y, int len) 
+    static void CleanLine(int x) 
     {
-        Console.SetCursorPosition(x, 0);
         for (int i = 0; i <= height; ++i) {
-            Console.SetCursorPosition(x, y + i);
+            Console.SetCursorPosition(x, i);
             Console.Write(' ');
             Thread.Sleep(flowSpeed - 10);
         }
     }
     static void Draw()
     {
-        int x = rnd.Next(5, width);
-        int y = rnd.Next(5, height);
-        int len = rnd.Next(minLen, maxLen);
-        DrawLine(x, y + 1, len);
-        CleanLine(x, y, len);
+        int x = rnd.Next(2, width);
+        int y = 2;
+        int len = rnd.Next(minLen, Math.Min(maxLen, height - y + 1));
+        DrawLine(x, y, len);
+        CleanLine(x);
     }
 
     static void Init()
@@ -80,7 +86,7 @@ class Program
         Timer timer = new Timer(new TimerCallback(Refresh), null, 10000, 10000);
 
         while (true) {
-            Task.Run(() => Draw());
+            Task.Factory.StartNew(() => Draw());
             Thread.Sleep(genSpeed);
         }
     }
