@@ -10,25 +10,18 @@ class Program
     const string chars = "$%#@!*abcdefghijklmnopqrstuvwxyz1234567890?;:ABCDEFGHIJKLMNOPQRSTUVWXYZ^&";
 
     static int height = Console.WindowHeight;
-
     static int width = Console.WindowWidth;
 
     static int minLen = 5;
     static int maxLen = height;
 
     const int flowSpeed = 50;
-    const int genSpeed = 500;
+    const int genSpeed = 100;
 
     /* Get a random int from chars array and convert it to char */
-    static char GetRandomChar() { 
-        int indx = rnd.Next(chars.Length); 
-        return Convert.ToChar(chars[indx]);
-    }
+    static char GetRandomChar() { return Convert.ToChar(chars[rnd.Next(chars.Length)]); }
 
-    static void ChColor(ConsoleColor color = ConsoleColor.White)
-    {
-        Console.ForegroundColor = color;
-    }
+    static void ChColor(ConsoleColor color = ConsoleColor.White) => Console.ForegroundColor = color;
 
     static void DrawLine(int x, int y, int len)
     {
@@ -68,8 +61,9 @@ class Program
         int x = rnd.Next(2, width);
         int y = 2;
         int len = rnd.Next(minLen, Math.Min(maxLen, height - y + 1));
-        DrawLine(x, y, len);
-        CleanLine(x);
+        var draw = Task.Factory.StartNew(() => DrawLine(x, y, len));
+        draw.Wait();
+        Task.Factory.StartNew(() => CleanLine(x));
     }
 
     static void Init()
