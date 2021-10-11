@@ -23,7 +23,7 @@ class Program
 
     static void ChColor(ConsoleColor color = ConsoleColor.White) => Console.ForegroundColor = color;
 
-    static void DrawLine(int x, int y, int len)
+    static async Task DrawLine(int x, int y, int len)
     {
         Console.SetCursorPosition(x, y);
 
@@ -48,7 +48,7 @@ class Program
             Thread.Sleep(flowSpeed);
         }
     }
-    static void CleanLine(int x) 
+    static async Task CleanLine(int x) 
     {
         for (int i = 0; i <= height; ++i) {
             Console.SetCursorPosition(x, i);
@@ -56,14 +56,13 @@ class Program
             Thread.Sleep(flowSpeed - 10);
         }
     }
-    static void Draw()
+    static async Task Draw()
     {
         int x = rnd.Next(2, width);
         int y = 2;
         int len = rnd.Next(minLen, Math.Min(maxLen, height - y + 1));
-        var draw = Task.Factory.StartNew(() => DrawLine(x, y, len));
-        draw.Wait();
-        Task.Factory.StartNew(() => CleanLine(x));
+        await Task.Run(() => DrawLine(x, y, len));
+        await Task.Run(() => CleanLine(x));
     }
 
     static void Init()
@@ -80,7 +79,7 @@ class Program
         Timer timer = new Timer(new TimerCallback(Refresh), null, 10000, 10000);
 
         while (true) {
-            Task.Factory.StartNew(() => Draw());
+            var curTask = Task.Run(() => Draw());
             Thread.Sleep(genSpeed);
         }
     }
