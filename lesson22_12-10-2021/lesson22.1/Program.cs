@@ -65,21 +65,16 @@ class Program
     {
         int x = rnd.Next(Margin, width - Margin);
         int y = rnd.Next(2, height - Margin);
-        int len = rnd.Next(3, 20);
+        int len = rnd.Next(10, 20);
 
-        await DrawLine(x, y, len);
+        DrawLine(x, y, len);
     }
 
     static async Task DrawMatrix(int amount)
     {
         var tasks = new Task[amount];
         for (int i = 0; i < amount; ++i)
-        {
-            tasks[i] = Task.Factory.StartNew(
-                    () => Draw()
-                    );
-        }
-        await Task.WhenAll(tasks);
+            tasks[i] = Task.Factory.StartNew( () => Draw());
     }
     /* Initialize the screen */
     static void Init()
@@ -91,8 +86,13 @@ class Program
     {
         Init();
         while (true) {
-            await DrawMatrix(5);
+            DrawMatrix(20);
             Thread.Sleep(500);
         }
+        //
+        // Test for parallels
+        //DrawLine(50, 5, 30);
+        //Thread.Sleep(1500);
+        //await DrawLine(50, 3, 30);
     }
 }
