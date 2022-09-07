@@ -327,25 +327,25 @@ namespace AlifBank
                 BackButton(currentLoginPriv, "to user profile"));
 
             var dt = new DataTable ();
-			dt.Columns.Add ("Num");
-			dt.Columns.Add ("Amount");
-			dt.Columns.Add ("Expiration date");
+            dt.Columns.Add ("Num");
+            dt.Columns.Add ("Amount");
+            dt.Columns.Add ("Expiration date");
 
             try {
-				int limit = SQL.GetAccountTransactionData(currentClientLogin).Limit;
-				var tmpBal = SQL.CalculateAccountBalance(currentClientLogin);
-				decimal mean = Math.Round((-1 * tmpBal) / limit, 2);
+                int limit = SQL.GetAccountTransactionData(currentClientLogin).Limit;
+                var tmpBal = SQL.CalculateAccountBalance(currentClientLogin);
+                decimal mean = Math.Round((-1 * tmpBal) / limit, 2);
 
-				MessageBox.Query("Data", $"limit: {limit}\nBalance:{tmpBal}\nmean: {mean}", "Ok");
+                MessageBox.Query("Data", $"limit: {limit}\nBalance:{tmpBal}\nmean: {mean}", "Ok");
 
-				for (int i = 0; i < limit; ++i) {
-					dt.Rows.Add ((i + 1).ToString(), mean.ToString(), SQL.GetAccountTransactionData(currentClientLogin).Created_At.AddDays(i));
-				}
+                for (int i = 0; i < limit; ++i) {
+                    dt.Rows.Add ((i + 1).ToString(), mean.ToString(), SQL.GetAccountTransactionData(currentClientLogin).Created_At.AddDays(i));
+                }
 
-				tableView.Table = dt;
-			} catch (Exception ex) {
+                tableView.Table = dt;
+            } catch (Exception ex) {
                 MessageBox.ErrorQuery("Error !", ex.Message, "Ok");
-			}
+            }
             End();
         }
         /* This screen shows your activity */
@@ -417,35 +417,35 @@ namespace AlifBank
                 var _pass = passText.Text.ToString();
                 Account newAccount = null;
                 try {
-					if (!int.TryParse(_ageStr, out var _age))                         throw new Exception("Age can not be empty");
+                    if (!int.TryParse(_ageStr, out var _age))                         throw new Exception("Age can not be empty");
                     if (String.IsNullOrEmpty(_fname) || String.IsNullOrEmpty(_lname)) throw new Exception("Names can not be empty");
                     if (_age <= 0 || _age >= 150)                                     throw new Exception("Invalid age");
                     if (_pass.Length < 6)                                             throw new Exception("Password should be 6 chars or longer");
                     if (String.IsNullOrEmpty(_login))                                 throw new Exception("Please fill the login field");
 
-					// Check age for compilance
-					newAccount = new Account()
-					{
-						FistName =_fname,
-						LastName = _lname,
-						Age = _age,
-						Login = _login,
-						Password = _pass,
-						/* This two don't need checks. */
-						Gender = genderRadio.SelectedItem,
-						IsAdmin = isAdminCheckBox.Checked
-					};
-					bool result = false;
-					try {
-						result = SQL.CreateAccount(newAccount);
-						if (result) MessageBox.Query("Success !", $"Created account {newAccount.Login}", "Ok");
-						Switch(MainScreen);
-					} 
-					catch (System.FormatException) {
-						MessageBox.ErrorQuery("Error !", "Please fill age form", "Ok");
-					} catch (Exception ex) {
-						MessageBox.ErrorQuery("Error !", ex.Message, "Ok");
-					}
+                    // Check age for compilance
+                    newAccount = new Account()
+                    {
+                        FistName =_fname,
+                                 LastName = _lname,
+                                 Age = _age,
+                                 Login = _login,
+                                 Password = _pass,
+                                 /* This two don't need checks. */
+                                 Gender = genderRadio.SelectedItem,
+                                 IsAdmin = isAdminCheckBox.Checked
+                    };
+                    bool result = false;
+                    try {
+                        result = SQL.CreateAccount(newAccount);
+                        if (result) MessageBox.Query("Success !", $"Created account {newAccount.Login}", "Ok");
+                        Switch(MainScreen);
+                    } 
+                    catch (System.FormatException) {
+                        MessageBox.ErrorQuery("Error !", "Please fill age form", "Ok");
+                    } catch (Exception ex) {
+                        MessageBox.ErrorQuery("Error !", ex.Message, "Ok");
+                    }
                 } catch (Exception ex) {
                     MessageBox.ErrorQuery("Error !", ex.Message, "Ok");
                 }
@@ -558,4 +558,3 @@ namespace AlifBank
         }
     }
 }
-// Select Id from table order by id desc limit 1
