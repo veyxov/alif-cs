@@ -183,7 +183,7 @@ namespace AlifBank
 
                 try
                 {
-                    var points = Program.CalculatePoints(currentClientLogin,
+                    var points = Program.CalculateScore(currentClientLogin,
                             sMaritStatus, sIsFromTj,
                             sLoanAmount, sCredHistory,
                             sPurpose, sDelHistory, sLimit);

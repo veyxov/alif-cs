@@ -5,7 +5,7 @@ namespace MainApp;
 /* Mehthods that hold the logic of the program */
 public static class Program
 {
-    public static int CalculatePoints(string login, int maritialStatus, bool isFromTj, int loanAmount, int credHistory, int purpose, int delHistory, int limit)
+    public static int CalculateScore(string login, int maritialStatus, bool isFromTj, int loanAmount, int credHistory, int purpose, int delHistory, int limit)
     {
         if (!SQL.ExistAccount(login)) throw new Exception("Account does not exist");
 
